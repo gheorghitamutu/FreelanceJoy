@@ -1,4 +1,11 @@
 steps:
-- name: 'gcr.io/cloud-builders/gcloud'
-  args: ['app', 'deploy']
-  timeout: '600s'
+  - id: 'Deploy to Environment'
+    name: 'gcr.io/cloud-builders/gcloud'
+    args: [
+      'app',
+      'deploy',
+      'app.yaml',
+      '--version=$BUILD_ID',
+      '--no-promote',
+      '--quiet'
+    ]
