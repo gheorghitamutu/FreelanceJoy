@@ -1,4 +1,5 @@
 # https://qiita.com/tfuruya/items/fa529c6cf54adaa81aa7
+# https://cloud.google.com/appengine/docs/flexible/go/configuring-datastore-indexes-with-index-yaml
 
 indexes:
   - kind: visit
