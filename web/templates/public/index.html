@@ -82,7 +82,15 @@
                         <div id="user-data">
                             {% if user_data %}
                             <br>
-                            <div>Firebase auth <b>{{ user_data['name'] }}</b></div>
+                            <div>
+                                Firebase auth
+                            </div>
+                            <div>
+                                Name <b>{{ user_data['name'] }}</b>
+                            </div>
+                            <div>
+                                Email <b>{{ user_data['email'] }}</b>
+                            </div>
                             <br>
                             <dt>Last 10 visits</dt>
                             <dd>

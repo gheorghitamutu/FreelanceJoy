@@ -1,3 +1,5 @@
+# https://googleapis.dev/python/datastore/latest/index.html
+
 import datetime
 import logging
 import os
@@ -21,16 +23,17 @@ class App(Flask):
         self.add_url_rule('/', view_func=self.root, methods=['GET', 'POST'])
         self.register_error_handler(500, self.server_error)
 
-    def store_time(self, dt):
-        entity = datastore.Entity(key=self.data_store_client.key('visit'))
+    def store_time(self, email, dt):
+        entity = datastore.Entity(key=self.data_store_client.key('User', email, 'visit'))
         entity.update({
             'timestamp': dt
         })
 
         self.data_store_client.put(entity)
 
-    def fetch_times(self, limit):
-        query = self.data_store_client.query(kind='visit')
+    def fetch_times(self, email, limit):
+        ancestor = self.data_store_client.key('User', email)
+        query = self.data_store_client.query(kind='visit', ancestor=ancestor)
         query.order = ['-timestamp']
 
         times = query.fetch(limit=limit)
@@ -53,16 +56,13 @@ class App(Flask):
                 # http://flask.pocoo.org/docs/1.0/quickstart/#sessions).
                 claims = google.oauth2.id_token.verify_firebase_token(
                     id_token, self.firebase_request_adapter)
+
+                self.store_time(claims['email'], datetime.datetime.now())
+                times = self.fetch_times(claims['email'], 10)
             except ValueError as exc:
                 # This will be raised if the token is expired or any other
                 # verification checks fail.
                 error_message = str(exc)
-
-            # Record and fetch the recent times a logged-in user has accessed
-            # the site. This is currently shared amongst all users, but will be
-            # individualized in a following step.
-            self.store_time(datetime.datetime.now())
-            times = self.fetch_times(10)
 
         return render_template(
             'index.html',

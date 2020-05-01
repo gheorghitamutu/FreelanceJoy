@@ -1,0 +1,8 @@
+# https://qiita.com/tfuruya/items/fa529c6cf54adaa81aa7
+
+indexes:
+  - kind: visit
+    ancestor: yes
+    properties:
+      - name: timestamp
+        direction: desc
