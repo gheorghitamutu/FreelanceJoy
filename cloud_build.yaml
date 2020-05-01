@@ -1,3 +1,6 @@
+# https://cloud.google.com/cloud-build/docs/build-config#timeout_2
+# https://stackoverflow.com/questions/58299693/where-is-set-global-limit-for-gcloud-steps-timeout-for-all-builds
+
 steps:
   - id: 'Deploy to Environment'
     name: 'gcr.io/cloud-builders/gcloud'
@@ -9,3 +12,4 @@ steps:
       '--no-promote',
       '--quiet'
     ]
+timeout: 24h
