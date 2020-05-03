@@ -4,12 +4,15 @@
 import datetime
 import logging
 import os
+from functools import wraps
+from urllib.parse import urlparse
 
+import firebase_admin
 import google.oauth2.credentials
 import google.oauth2.id_token
-import pyrebase
-from flask import Flask, render_template, request, json, redirect
-from google.auth.transport import requests
+from firebase_admin import auth, credentials
+from flask import Flask, render_template, request, json, redirect, url_for
+from google.auth.transport import requests as google_requests
 from google.cloud import datastore, secretmanager
 from google_auth_oauthlib.flow import Flow
 
@@ -22,33 +25,30 @@ class App(Flask):
                          template_folder=os.path.join(os.getcwd(), 'web', 'templates', 'public'))
 
         self.data_store_client = datastore.Client()
-        self.firebase_request_adapter = requests.Request()
         self.secrets = secretmanager.SecretManagerServiceClient()
-        self.firebase_api_key = \
-            self.secrets.access_secret_version("projects/927858267242/secrets/FIREBASE_API_KEY/versions/1") \
-                .payload.data.decode("utf-8")
         self.client_secret = \
             json.loads(self.secrets.access_secret_version("projects/927858267242/secrets/CLIENT_SECRET/versions/1")
                        .payload.data.decode("utf-8"))
+        self.firebase_admin_secret = \
+            json.loads(
+                self.secrets.access_secret_version("projects/927858267242/secrets/FIREBASE_ADMIN_SECRET/versions/1")
+                .payload.data.decode("utf-8"))
 
-        self.firebase_config = {
-            'apiKey': self.firebase_api_key,
-            'authDomain': 'freelancejoy.firebaseapp.com',
-            'databaseURL': 'https://freelancejoy.firebaseio.com',
-            'projectId': 'freelancejoy',
-            'storageBucket': 'freelancejoy.appspot.com',
-            'messagingSenderId': '927858267242',
-            'appId': '1:927858267242:web:7e0e0e8251af5d80ef2613',
-            'measurementId': 'G-GZE64K9308'
-        }
-        self.firebase = pyrebase.initialize_app(self.firebase_config)
-        self.firebase_auth = self.firebase.auth()
-        self.firebase_db = self.firebase.database()
+        cred = credentials.Certificate(self.firebase_admin_secret)
+        firebase_admin.initialize_app(cred)
 
-        self.add_url_rule('/', view_func=self.root, methods=['GET', 'POST'])
-        self.add_url_rule('/login', view_func=self.login, methods=['GET', 'POST'])
-        self.add_url_rule('/__/auth/handler/?<path:confirmation>', view_func=self.handle_auth, methods=['GET', 'POST'])
+        self.flow = None
+        self.session = dict()
+
+        self.add_url_rule('/', view_func=self.root, methods=['GET'])
+        # currently not used
+        self.add_url_rule('/google_login', view_func=self.google_login, methods=['GET'])
+        # currently not used
+        self.add_url_rule('/__/auth/handler/', view_func=self.handle_auth, methods=['GET'])
+        self.add_url_rule('/dashboard', view_func=self.dashboard, methods=['GET'])
+        self.add_url_rule('/logout', view_func=self.logout, methods=['GET'])
         self.register_error_handler(500, self.server_error)
+        self.register_error_handler(404, self.not_found)
 
     def store_time(self, email, dt):
         entity = datastore.Entity(key=self.data_store_client.key('User', email, 'visit'))
@@ -68,6 +68,87 @@ class App(Flask):
         return times
 
     def root(self):
+        claims, times, error_message = self.get_claim()
+        if error_message is None and claims is not None:
+            return redirect(url_for('dashboard'), code=302)
+
+        return render_template('landing.html')
+
+    # [END gae_python37_auth_verify_token]
+
+    def google_login(self):
+        # onclick="location.href='{{ url_for('google_login') }}'"
+        # currently not used because you can't get an ID token from server side Firebase
+
+        # Use the client_secret.json file to identify the application requesting
+        # authorization. The client ID (from that file) and access scopes are required.
+        self.flow = Flow.from_client_config(
+            self.client_secret,
+            scopes=['openid',
+                    'https://www.googleapis.com/auth/userinfo.profile',
+                    'https://www.googleapis.com/auth/userinfo.email'])
+
+        # Indicate where the API server will redirect the user after the user completes
+        # the authorization flow. The redirect URI is required. The value must exactly
+        # match one of the authorized redirect URIs for the OAuth 2.0 client, which you
+        # configured in the API Console. If this value doesn't match an authorized URI,
+        # you will get a 'redirect_uri_mismatch' error.
+        url_parsed = urlparse(request.base_url)
+        self.flow.redirect_uri = '{}://{}/__/auth/handler/'.format(url_parsed.scheme, url_parsed.netloc)
+
+        # Generate URL for request to Google's OAuth 2.0 server.
+        # Use kwargs to set optional request parameters.
+        authorization_url, state = self.flow.authorization_url(
+            # Enable offline access so that you can refresh an access token without
+            # re-prompting the user for permission. Recommended for web server apps.
+            access_type='offline',
+            # Enable incremental authorization. Recommended as a best practice.
+            include_granted_scopes='true')
+
+        return redirect(authorization_url)
+
+    def handle_auth(self):
+        cred = self.flow.fetch_token(authorization_response=request.url)
+        authorized_session = self.flow.authorized_session()
+        response = authorized_session.get('https://www.googleapis.com/userinfo/v2/me')
+
+        self.session['current_user'] = json.loads(response.content.decode('utf-8').replace("'", '"'))  # bad
+        self.session['credentials'] = cred  # super bad
+
+        user = {
+            'display_name': self.session['current_user']['name'],
+            'email': self.session['current_user']['email'],
+            'email_verified': self.session['current_user']['verified_email'],
+            'phone_number': None,
+            'photo_url': self.session['current_user']['picture'],
+            'password': None,
+            'disabled': False,
+            'app': None
+        }
+
+        try:
+            userInfo = auth.get_user_by_email(self.session['current_user']['email'])
+            userInfo = auth.update_user(userInfo.uid, **user)  # may want to add info from here
+        except Exception as e:
+            print(e)
+            userInfo = auth.create_user(**user)
+
+        self.session['current_user']['uid'] = userInfo.uid
+        self.session['current_user']['phone_number'] = userInfo.phone_number
+        self.session['current_user']['provider_id'] = userInfo.provider_id
+        self.session['current_user']['disabled'] = userInfo.disabled
+        self.session['current_user']['tokens_valid_after_timestamp'] = userInfo.tokens_valid_after_timestamp
+        self.session['current_user']['creation_timestamp'] = userInfo.user_metadata.creation_timestamp
+        self.session['current_user']['last_sign_in_timestamp'] = userInfo.user_metadata.last_sign_in_timestamp
+        self.session['current_user']['provider_data'] = userInfo.provider_data
+        self.session['current_user']['custom_claims'] = userInfo.custom_claims
+        self.session['current_user']['tenant_id'] = userInfo.tenant_id
+
+        return redirect(url_for('dashboard'))
+
+    def get_claim(self):
+        # https://stackoverflow.com/questions/53905154/retrieve-idtoken-and-refreshtoken-in-firebase-admin-python-sdk
+
         # Verify Firebase auth.
         id_token = request.cookies.get("token")
         error_message = None
@@ -81,51 +162,76 @@ class App(Flask):
                 # some applications may wish to cache results in an encrypted
                 # session store (see for instance
                 # http://flask.pocoo.org/docs/1.0/quickstart/#sessions).
-                claims = google.oauth2.id_token.verify_firebase_token(
-                    id_token, self.firebase_request_adapter)
+                claims = google.oauth2.id_token.verify_firebase_token(id_token, google_requests.Request())
 
-                self.store_time(claims['email'], datetime.datetime.now())
-                times = self.fetch_times(claims['email'], 10)
+                if 'current_user' not in self.session:
+                    self.session['current_user'] = dict()
+
+                sign_in_provider = claims['firebase']['sign_in_provider']
+                if sign_in_provider == 'phone':
+                    self.store_time(claims['phone_number'], datetime.datetime.now())
+                    times = self.fetch_times(claims['phone_number'], 10)
+                    userInfo = auth.get_user_by_phone_number(claims['phone_number'])
+                else:
+                    self.store_time(claims['email'], datetime.datetime.now())
+                    times = self.fetch_times(claims['email'], 10)
+                    userInfo = auth.get_user_by_email(claims['email'])
+
+                self.session['claims'] = claims
+
+                self.session['current_user']['uid'] = userInfo.uid
+                self.session['current_user']['phone_number'] = userInfo.phone_number
+                self.session['current_user']['email'] = userInfo.email
+                self.session['current_user']['provider_id'] = userInfo.provider_id
+                self.session['current_user']['disabled'] = userInfo.disabled
+                self.session['current_user']['tokens_valid_after_timestamp'] = userInfo.tokens_valid_after_timestamp
+                self.session['current_user']['creation_timestamp'] = userInfo.user_metadata.creation_timestamp
+                self.session['current_user']['last_sign_in_timestamp'] = userInfo.user_metadata.last_sign_in_timestamp
+                self.session['current_user']['provider_data'] = userInfo.provider_data
+                self.session['current_user']['custom_claims'] = userInfo.custom_claims
+                self.session['current_user']['tenant_id'] = userInfo.tenant_id
+
             except ValueError as exc:
                 # This will be raised if the token is expired or any other
                 # verification checks fail.
                 error_message = str(exc)
 
-        return render_template(
-            'index.html',
-            user_data=claims, error_message=error_message, times=times, firebase_config=self.firebase_config)
+        return claims, times, error_message
 
-    # [END gae_python37_auth_verify_token]
+    def login_required(func):
+        @wraps(func)
+        def function_wrapper(*args):
+            if 'claims' in args[0].session:
+                claims = args[0].session['claims']
+                if datetime.datetime.now().timestamp() < claims['exp']:
+                    claims, times, error_message = args[0].get_claim()
+                    if error_message is None:
+                        return func(*args)
 
-    def login(self):
-        # Use the client_secret.json file to identify the application requesting
-        # authorization. The client ID (from that file) and access scopes are required.
-        flow = Flow.from_client_config(
-            self.client_secret,
-            scopes=['profile', 'email'])
+                args[0].session = dict()
+                return args[0].unauthorized_handler()
+            else:
+                return args[0].unauthorized_handler()
 
-        # Indicate where the API server will redirect the user after the user completes
-        # the authorization flow. The redirect URI is required. The value must exactly
-        # match one of the authorized redirect URIs for the OAuth 2.0 client, which you
-        # configured in the API Console. If this value doesn't match an authorized URI,
-        # you will get a 'redirect_uri_mismatch' error.
-        flow.redirect_uri = 'https://freelancejoy.firebaseapp.com/__/auth/handler'
+        return function_wrapper
 
-        # Generate URL for request to Google's OAuth 2.0 server.
-        # Use kwargs to set optional request parameters.
-        authorization_url, state = flow.authorization_url(
-            # Enable offline access so that you can refresh an access token without
-            # re-prompting the user for permission. Recommended for web server apps.
-            access_type='offline',
-            # Enable incremental authorization. Recommended as a best practice.
-            include_granted_scopes='true')
+    @login_required
+    def logout(self):
+        auth.revoke_refresh_tokens(self.session['current_user']['uid'])
+        self.session = dict()
+        return redirect(url_for('root'))
 
-        return redirect(authorization_url)
+    @login_required
+    def dashboard(self):
+        return render_template('dashboard.html', session=self.session)
 
     @staticmethod
-    def handle_auth(confirmation):
-        print(request.get('https://www.googleapis.com/userinfo/v2/me').json())
-        return confirmation
+    def unauthorized_handler():
+        return redirect(url_for('root'))
+
+    @staticmethod
+    def not_found(e):
+        return str(e)
 
     @staticmethod
     def server_error(e):
@@ -138,5 +244,6 @@ class App(Flask):
 
 app = App(__name__)
 
+# https://blog.miguelgrinberg.com/post/running-your-flask-application-over-https
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=8080, debug=True)
+    app.run(host='127.0.0.1', port=8080, debug=True, ssl_context='adhoc')
