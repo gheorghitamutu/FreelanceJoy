@@ -12,4 +12,5 @@ steps:
       '--no-promote',
       '--quiet'
     ]
-timeout: 24h
+  timeout: 1200s
+timeout: 1200s
