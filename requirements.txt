@@ -11,4 +11,6 @@ pyopenssl
 firebase-admin
 flask-sitemap
 flask-caching
+flask-swagger-ui
 mkdocs
+Werkzeug==1.0.1
