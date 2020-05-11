@@ -11,3 +11,4 @@ pyopenssl
 firebase-admin
 flask-sitemap
 flask-caching
+mkdocs
