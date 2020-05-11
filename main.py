@@ -12,6 +12,8 @@ import google.oauth2.credentials
 import google.oauth2.id_token
 from firebase_admin import auth, credentials
 from flask import Flask, render_template, request, json, redirect, url_for
+from flask_caching import Cache
+from flask_sitemap import Sitemap, sitemap_page_needed
 from google.auth.transport import requests as google_requests
 from google.cloud import datastore, secretmanager
 from google_auth_oauthlib.flow import Flow
@@ -32,13 +34,19 @@ class App(Flask):
         self.firebase_admin_secret = \
             json.loads(
                 self.secrets.access_secret_version("projects/927858267242/secrets/FIREBASE_ADMIN_SECRET/versions/1")
-                .payload.data.decode("utf-8"))
+                    .payload.data.decode("utf-8"))
 
         cred = credentials.Certificate(self.firebase_admin_secret)
         firebase_admin.initialize_app(cred)
 
         self.flow = None
         self.session = dict()
+
+        self.cache = Cache(app=self, config={'CACHE_TYPE': 'simple'})
+        self.config['SITEMAP_INCLUDE_RULES_WITHOUT_PARAMS'] = False  # true for listing every route available
+        self.flask_sitemap = Sitemap(app=self)
+        # keep a sitemap only for the pages that does not require authentication (may add special cases later)
+        self.flask_sitemap.register_generator(self.root_sitemap)
 
         self.add_url_rule('/', view_func=self.root, methods=['GET'])
         # currently not used
@@ -47,6 +55,7 @@ class App(Flask):
         self.add_url_rule('/__/auth/handler/', view_func=self.handle_auth, methods=['GET'])
         self.add_url_rule('/dashboard', view_func=self.dashboard, methods=['GET'])
         self.add_url_rule('/logout', view_func=self.logout, methods=['GET'])
+
         self.register_error_handler(500, self.server_error)
         self.register_error_handler(404, self.not_found)
 
@@ -74,7 +83,10 @@ class App(Flask):
 
         return render_template('landing.html')
 
-    # [END gae_python37_auth_verify_token]
+    @staticmethod
+    def root_sitemap():
+        # Not needed if you set SITEMAP_INCLUDE_RULES_WITHOUT_PARAMS=True
+        yield 'root', {}
 
     def google_login(self):
         # onclick="location.href='{{ url_for('google_login') }}'"
@@ -241,6 +253,18 @@ class App(Flask):
         See logs for full stacktrace.
         """.format(e), 500
 
+    @sitemap_page_needed.connect
+    def create_page(self, page, urlset):
+        self.cache[page] = self.flask_sitemap.render_page(urlset=urlset)
+
+    def load_page(self, fn):
+        @wraps(fn)
+        def loader(*args, **kwargs):
+            page = kwargs.get('page')
+            data = self.cache.get(page)
+            return data if data else fn(*args, **kwargs)
+
+        return loader
 
 app = App(__name__)
 
