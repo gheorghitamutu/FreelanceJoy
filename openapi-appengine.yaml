@@ -32,7 +32,7 @@ paths:
           schema:
             $ref: "#/definitions/echoMessage"
       security:
-        - api_key: []
+        - api_key: ["AIzaSyA584SHdHJ9O2AIY6-L2nkvIDgi-wl7QfU"]
   "/auth/info/googlejwt":
     get:
       description: "Returns the requests' authentication information."
@@ -105,7 +105,7 @@ securityDefinitions:
     # This must match the 'iss' field in the JWT.
     x-google-issuer: "https://securetoken.google.com/freelancejoy"
     # Update this with your service account's email address.
-    x-google-jwks_uri: "https://www.googleapis.com/service_accounts/v1/jwk/freelancejoy@appspot.gserviceaccount.com"
+    x-google-jwks_uri: "https://www.googleapis.com/service_accounts/v1/jwk/endpointsapis@freelancejoy.iam.gserviceaccount.com"
     # This must match the "aud" field in the JWT. You can add multiple audiences to accept JWTs from multiple clients.
     x-google-audiences: "freelancejoy"
   # This section configures authentication using Google App Engine default
