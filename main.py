@@ -36,8 +36,8 @@ class App(Flask):
                 self.secrets.access_secret_version("projects/927858267242/secrets/FIREBASE_ADMIN_SECRET/versions/1")
                     .payload.data.decode("utf-8"))
 
-        cred = credentials.Certificate(self.firebase_admin_secret)
-        firebase_admin.initialize_app(cred)
+        self.firebase_admin_credentials = credentials.Certificate(self.firebase_admin_secret)
+        firebase_admin.initialize_app(self.firebase_admin_credentials)
 
         self.flow = None
         self.session = dict()
