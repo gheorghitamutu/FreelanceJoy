@@ -1,1 +1,6 @@
 site_name: FreelanceJoy
+nav:
+  - Home: 'index.md'
+  - Studies:
+    - Case Study: 'caseStudy.md'
+    - Existing Solutions: 'existingSolutions.md'
