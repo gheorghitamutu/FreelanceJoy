@@ -33,7 +33,7 @@ Clone the project's repository and create a virtual python environment with all 
     README.md                               # Project's Readme file.
     requirements.txt                        # Project's python dependencies.
 
-# Project Guidlines
+# Project Guidelines
     Two components:
     	1. Posting announcements with deadline (number of days, months), tags and possible attachments
     		- every freelancer bids for any project 
