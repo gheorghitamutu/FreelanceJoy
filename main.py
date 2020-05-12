@@ -1,6 +1,10 @@
 # https://googleapis.dev/python/datastore/latest/index.html
 # https://cloud.google.com/community/tutorials/secrets-manager-python
 
+import os
+
+os.environ.setdefault("GCLOUD_PROJECT", "freelancejoy")
+
 import datetime
 import logging
 import os
