@@ -42,7 +42,7 @@
  <img src="../images/technologiesIcons/circleci.png"  width="15%" height="15%">
 
 ## Architecture
-[ ![](../images/technologiesIcons/fiverr-architecture.jpg) ](../images/technologiesIcons/fiverr-architecture.jpg)
+[ ![](images/technologiesIcons/fiverrArchitecture.jpg) ](images/technologiesIcons/fiverrArchitecture.jpg)
 
 
 
