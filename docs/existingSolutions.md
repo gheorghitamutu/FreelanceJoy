@@ -76,4 +76,3 @@ can offer articles for $5, you know about homeopathy – you can consult people.
 You can barely imagine how many thing can be offered for 5 bucks.
 
 
-[ ![](images/technologiesIcons/Screenshot.png) ](images/technologiesIcons/Screenshot.png)
