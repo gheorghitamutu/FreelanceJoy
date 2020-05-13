@@ -6,4 +6,5 @@ nav:
     - Existing Solutions: 'existingSolutions.md'
   - Use Cases: 'useCases.md'
   - Business Canvas: 'businessCanvas.md'
+  - Architecture: architecture.md
   - Bibliography: 'bibliography.md'

@@ -33,25 +33,6 @@ paths:
             $ref: "#/definitions/echoMessage"
       security:
         - api_key: ["AIzaSyA584SHdHJ9O2AIY6-L2nkvIDgi-wl7QfU"]
-  "/":
-    get:
-      description: "Get landing page."
-      operationID: "index"
-      produces:
-        - "text/html"
-      responses:
-        200:
-          description: "Index"
-          schema:
-            $ref: "#/definitions/index"
-      parameters:
-        - description: "Message to echo"
-          in: body
-          required: false
-          schema:
-            $ref: "#/definitions/index"
-      security:
-        - api_key: ["AIzaSyA584SHdHJ9O2AIY6-L2nkvIDgi-wl7QfU"]
   "/auth/info/googlejwt":
     get:
       description: "Returns the requests' authentication information."
@@ -99,11 +80,6 @@ definitions:
     type: "object"
     properties:
       message:
-        type: "string"
-  index:
-    type: "object"
-    properties:
-      body:
         type: "string"
   authInfoResponse:
     properties:
