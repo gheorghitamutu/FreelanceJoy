@@ -1,8 +1,3 @@
-# https://googleapis.dev/python/datastore/latest/index.html
-# https://cloud.google.com/community/tutorials/secrets-manager-python
-# https://github.com/GoogleCloudPlatform/python-docs-samples/blob/master/endpoints/getting-started
-# https://endpointsportal.freelancejoy.cloud.goog/docs/freelancejoy.appspot.com/1/introduction
-
 import os
 
 os.environ.setdefault("GCLOUD_PROJECT", "freelancejoy")
@@ -165,8 +160,6 @@ class App(Flask):
         return redirect(url_for('dashboard'))
 
     def get_claim(self):
-        # https://stackoverflow.com/questions/53905154/retrieve-idtoken-and-refreshtoken-in-firebase-admin-python-sdk
-
         # Verify Firebase auth.
         id_token = request.cookies.get("token")
         error_message = None
@@ -179,7 +172,6 @@ class App(Flask):
                 # verifies the token on each page load. For improved performance,
                 # some applications may wish to cache results in an encrypted
                 # session store (see for instance
-                # http://flask.pocoo.org/docs/1.0/quickstart/#sessions).
                 claims = google.oauth2.id_token.verify_firebase_token(id_token, google_requests.Request())
 
                 if 'current_user' not in self.session:
@@ -272,8 +264,8 @@ class App(Flask):
 
         return loader
 
+
 app = App(__name__)
 
-# https://blog.miguelgrinberg.com/post/running-your-flask-application-over-https
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True, ssl_context='adhoc')
