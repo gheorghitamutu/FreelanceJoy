@@ -4,5 +4,6 @@ nav:
   - Studies:
     - Case Study: 'caseStudy.md'
     - Existing Solutions: 'existingSolutions.md'
-    - Use Cases: 'useCases.md'
+  - Use Cases: 'useCases.md'
+  - Business Canvas: 'businessCanvas.md'
   - Bibliography: 'bibliography.md'
