@@ -1,7 +1,7 @@
 # [START swagger]
 swagger: "2.0"
 info:
-  description: "A simple Google Cloud Endpoints API example."
+  description: "Freelance Joy Google Cloud Endpoints API."
   title: "Endpoints Example"
   version: "1.0.0"
 host: "freelancejoy.appspot.com"
@@ -31,6 +31,25 @@ paths:
           required: true
           schema:
             $ref: "#/definitions/echoMessage"
+      security:
+        - api_key: ["AIzaSyA584SHdHJ9O2AIY6-L2nkvIDgi-wl7QfU"]
+  "/":
+    get:
+      description: "Get landing page."
+      operationID: "index"
+      produces:
+        - "text/html"
+      responses:
+        200:
+          description: "Index"
+          schema:
+            $ref: "#/definitions/index"
+      parameters:
+        - description: "Message to echo"
+          in: body
+          required: false
+          schema:
+            $ref: "#/definitions/index"
       security:
         - api_key: ["AIzaSyA584SHdHJ9O2AIY6-L2nkvIDgi-wl7QfU"]
   "/auth/info/googlejwt":
@@ -80,6 +99,11 @@ definitions:
     type: "object"
     properties:
       message:
+        type: "string"
+  index:
+    type: "object"
+    properties:
+      body:
         type: "string"
   authInfoResponse:
     properties:

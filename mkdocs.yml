@@ -4,3 +4,4 @@ nav:
   - Studies:
     - Case Study: 'caseStudy.md'
     - Existing Solutions: 'existingSolutions.md'
+    - Use Cases: 'useCases.md'

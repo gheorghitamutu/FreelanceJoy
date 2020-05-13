@@ -1,5 +1,7 @@
 # https://googleapis.dev/python/datastore/latest/index.html
 # https://cloud.google.com/community/tutorials/secrets-manager-python
+# https://github.com/GoogleCloudPlatform/python-docs-samples/blob/master/endpoints/getting-started
+# https://endpointsportal.freelancejoy.cloud.goog/docs/freelancejoy.appspot.com/1/introduction
 
 import os
 
