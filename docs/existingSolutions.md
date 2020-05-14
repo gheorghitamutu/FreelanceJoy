@@ -50,6 +50,25 @@ Each service offered is called a "gig".
  <img src="../images/technologiesIcons/circleci.png"  width="15%" height="15%">
 
 ## Architecture
+**Chimera**
+
+A Fiverr microservice template consisting of:
+
+1. a REST API endpoint for synchronous reads
+
+2. a RabbitMQ consumer for asynchronous writes residing in the same Repo, sharing the same business logic code
+
+**Ravens**
+
+A Fiverr State Change Event describing a change in the attributes of an entity followed by a command to a chimera.
+
+**Perseus**
+
+The Fiverr Slayer of Ruby on Rails - a NodeJS based micro-frontend structured as a ReactJS SPA for a specific vertical (gig page, order page, checkout page)
+
+**Phoenix**
+
+A Fiverr presentation data aggregator - consuming Ravens and building a read optimized projection of the data consumed by Perseus to generate views. Can renew its data view by replaying the Ravens.
 [ ![](images/technologiesIcons/fiverrArchitecture.jpg) ](images/technologiesIcons/fiverrArchitecture.jpg)
 
 ## Marketing approaches
