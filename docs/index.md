@@ -55,4 +55,6 @@ Clone the project's repository and create a virtual python environment with all 
     	3. Parties involved management:
     		- used for profile creation
     	4. The managent of the projects that are up for sale.
-
+    
+# SwaggerHub
+<https://app.swaggerhub.com/apis/gheorghitamutu/FreelanceJoy/1.0.0><br>
