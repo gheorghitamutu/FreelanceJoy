@@ -42,9 +42,9 @@ Major advantage - speeds up production time.<br>
 Flask is a micro web framework written in Python.<br>
 It is classified as a microframework because it does not require particular tools or libraries.<br>
 It has no database abstraction layer, form validation,<br>
-or any other components where pre-existing third-party libraries provide common functions.
-
-Major advantages - low complexity, dependency free & easy to learn language.
+or any other components where pre-existing third-party libraries provide common functions.<br>
+<br>
+Major advantages - low complexity, dependency free & easy to learn language.<br>
 
 ## Cloud Logging API							
 ## Cloud Monitoring API					
