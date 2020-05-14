@@ -42,6 +42,8 @@ Clone the project's repository and create a virtual python environment with all 
     		
     	2. Putting projects up for sale
     		- a project can be put up for sale on the platform by any account type
+    		- an employer can partner up with the freelancer and sell the project on
+    		marketplace
     		- each party receives a percentage of the price (40% employee, 60% employer) - a passive income would be generated
     	
         
