@@ -46,23 +46,66 @@ or any other components where pre-existing third-party libraries provide common 
 <br>
 Major advantages - low complexity, dependency free & easy to learn language.<br>
 
-## Cloud Logging API							
-## Cloud Monitoring API					
-## Cloud Build API							
-## Service Control API						
-## Compute Engine API						
-## Cloud Deployment Manager V2 API			
-## App Engine Admin API					
-## Secret Manager API						
-## Cloud Pub/Sub API						
-## Identity Toolkit API					
-## Cloud Source Repositories API			
-## Service Usage API						
-## Service Management API					
+## Cloud Logging API		
+Writes log entries and manages your Cloud Logging configuration.<br>
+			
+## Cloud Monitoring API		
+Manages your Cloud Monitoring data and configurations.<br>
+			
+## Cloud Build API
+Creates and manages builds on Google Cloud Platform.<br>
+			
+## Service Control API	
+Provides control plane functionality to managed services, such as logging, monitoring, and status checks.<br>
+				
+## Compute Engine API		
+Creates and runs virtual machines on Google Cloud Platform.<br>
+				
+## Cloud Deployment Manager V2 API	
+The Google Cloud Deployment Manager v2 API provides services for configuring,<br>
+deploying, and viewing Google Cloud services and APIs via templates which specify deployments of Cloud resources.<br>
+		
+## App Engine Admin API
+Provisions and manages developers' App Engine applications.<br>
+			
+## Secret Manager API
+Stores sensitive data such as API keys, passwords, and certificates. Provides convenience while improving security.<br>
+			
+## Cloud Pub/Sub API
+Provides reliable, many-to-many, asynchronous messaging between applications.<br>
+
+## Identity Toolkit API
+The Google Identity Toolkit API lets you use open standards to verify a user's identity.<br>
+			
+## Cloud Source Repositories API
+Accesses source code repositories hosted by Google.<br>
+		
+## Service Usage API
+Enables services that service consumers want to use on Google Cloud Platform,<br>
+lists the available or enabled services, or disables services that service consumers no longer use.<br>
+				
+## Service Management API
+Google Service Management allows service producers to publish their services on Google Cloud Platform<br>
+so that they can be discovered and used by service consumers.<br>
+				
 ## Cloud Functions API						
-## Google Cloud Memorystore for Redis API	
-## Cloud Run API							
-## Firebase Installations API				
-## Cloud Trace API	12						
-## Token Service API						
+Manages lightweight user-provided functions executed in response to events.<br>
+
+## Google Cloud Memorystore for Redis API
+Creates and manages Redis instances on the Google Cloud Platform.<br>
+
+## Cloud Run API
+Deploy and manage user provided container images that scale automatically based on HTTP traffic.<br>
+						
+## Firebase Installations API	
+Manages operations on Firebase DB.<br>
+			
+## Cloud Trace API
+Sends application trace data to Cloud Trace for viewing.<br>
+					
+## Token Service API
+The Token Service API lets you exchange an ID token or a refresh token for an access token and a refresh token,<br>
+which you can use to securely call your own APIs.<br>
+				
 ## Endpoints API
+REST APIs, developer portal, metrics.
