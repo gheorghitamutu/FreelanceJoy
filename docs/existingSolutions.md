@@ -69,6 +69,8 @@ The Fiverr Slayer of Ruby on Rails - a NodeJS based micro-frontend structured as
 **Phoenix**
 
 A Fiverr presentation data aggregator - consuming Ravens and building a read optimized projection of the data consumed by Perseus to generate views. Can renew its data view by replaying the Ravens.
+[ ![](images/technologiesIcons/fiverrEntities.jpg) ](images/technologiesIcons/fiverrEntities.jpg)
+
 [ ![](images/technologiesIcons/fiverrArchitecture.jpg) ](images/technologiesIcons/fiverrArchitecture.jpg)
 
 ## Marketing approaches
