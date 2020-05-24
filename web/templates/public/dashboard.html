@@ -1,13 +1,43 @@
-{% extends "index.html" %}
-{% block title %}
-{{ super() }}
-{% endblock %}
-{% block head %}
-<!-- add header stuff -->
-{{ super() }}
-{% endblock %}
+<!doctype html>
+<html>
 
-{% block content %}
+<head>
+    {% block head %}
+    <meta charset=utf-8/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>{% block title %}FreelanceJoy{% endblock %}</title>
+
+    <!-- Material Design Theming -->
+    <link href="https://code.getmdl.io/1.1.3/material.orange-indigo.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+
+    <!-- See https://github.com/firebase/firebaseui-web. -->
+    <!-- [START gae_python37_auth_init_firebase] -->
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.2//firebase-auth.js"></script>
+    <script src="https://cdn.firebase.com/libs/firebaseui/4.0.0/firebaseui.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-analytics.js"></script>
+
+    <!-- [START gae_python37_auth_include_firebaseui] -->
+    <script src="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.js"></script>
+    <link href="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.css" rel="stylesheet" type="text/css"/>
+    <!-- [END gae_python37_auth_include_firebaseui] -->
+
+    <!-- [START gae_python37_auth_init_firebase] -->
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+    <!-- [END gae_python37_auth_init_firebase] -->
+
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" type="text/css">
+    {% endblock %}
+</head>
+
+<body>
 
 <!-- Container for the sign in status and user info -->
 <div class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
@@ -51,5 +81,6 @@
     </div>
 </div>
 
+</body>
 
-{% endblock %}
+</html>
