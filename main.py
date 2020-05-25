@@ -35,8 +35,13 @@ class App(Flask):
                 self.secrets.access_secret_version("projects/927858267242/secrets/FIREBASE_ADMIN_SECRET/versions/1")
                     .payload.data.decode("utf-8"))
 
+        # Use this one for local debugging purposes
+        # self.sql_secret = \
+        #    self.secrets.access_secret_version("projects/927858267242/secrets/SQL_AUTH_DETAILS/versions/3") \
+        #        .payload.data.decode("utf-8")
+
         self.sql_secret = \
-            self.secrets.access_secret_version("projects/927858267242/secrets/SQL_AUTH_DETAILS/versions/3") \
+            self.secrets.access_secret_version("projects/927858267242/secrets/SQL_AUTH_DETAILS/versions/4") \
                 .payload.data.decode("utf-8")
 
         self.firebase_admin_credentials = credentials.Certificate(self.firebase_admin_secret)
