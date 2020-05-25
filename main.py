@@ -1,7 +1,3 @@
-import os
-
-os.environ.setdefault("GCLOUD_PROJECT", "freelancejoy")
-
 import datetime
 import logging
 import os
@@ -16,6 +12,10 @@ from flask_caching import Cache
 from flask_sitemap import Sitemap, sitemap_page_needed
 from google.auth.transport import requests as google_requests
 from google.cloud import datastore, secretmanager
+
+import models
+
+os.environ.setdefault("GCLOUD_PROJECT", "freelancejoy")
 
 
 class App(Flask):
@@ -35,8 +35,36 @@ class App(Flask):
                 self.secrets.access_secret_version("projects/927858267242/secrets/FIREBASE_ADMIN_SECRET/versions/1")
                     .payload.data.decode("utf-8"))
 
+        self.sql_secret = \
+            self.secrets.access_secret_version("projects/927858267242/secrets/SQL_AUTH_DETAILS/versions/3") \
+                .payload.data.decode("utf-8")
+
         self.firebase_admin_credentials = credentials.Certificate(self.firebase_admin_secret)
         firebase_admin.initialize_app(self.firebase_admin_credentials)
+
+        # Database
+        self.config["SQLALCHEMY_DATABASE_URI"] = self.sql_secret
+        self.config["SQLALCHEMY_ECHO"] = True
+        self.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+        self.config["SQLALCHEMY_POOL_TIMEOUT"] = 100
+        self.config["SQLALCHEMY_MAX_OVERFLOW"] = 10
+
+        self.db = models.db
+        self.db.init_app(self)
+        self.app_context().push()
+
+        with self.app_context():
+            self.db.create_all()  # Create database tables for our data models
+
+        # TODO: remove this!
+        # me = models.Test(
+        #     username='admin',
+        #     email='admin@example.com',
+        #     created=datetime.datetime.now(),
+        #     bio="In West Philadelphia born n raised...",
+        #     admin=False)
+        # self.db.session.add(me)
+        # self.db.session.commit()
 
         self.flow = None
         self.session = dict()
