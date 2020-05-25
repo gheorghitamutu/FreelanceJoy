@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible">
+  <link href="{{ url_for('static', filename='images/favicon.ico') }}" rel='icon' type='image/x-icon'/>
+
+  <title>FreelanceJoy - {% block title %} {% endblock %}</title>
+
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- Bootstrap 3.3.7 -->
+  <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="{{ url_for('static', filename='css/font-awesome.min.css') }}" rel="stylesheet">
+  <!-- Ionicons -->
+  <link href="{{ url_for('static', filename='css/ionicons.min.css') }}" rel="stylesheet">
+  <!-- Theme style -->
+  <link href="{{ url_for('static', filename='css/adminlte.min.css') }}" rel="stylesheet">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link href="{{ url_for('static', filename='css/_all-skins.min.css') }}" rel="stylesheet">
+  <!-- Morris chart -->
+  <link href="{{ url_for('static', filename='css/morris.min.css') }}" rel="stylesheet">
+  <!-- jvectormap -->
+  <link href="{{ url_for('static', filename='css/jquery-jvectormap.css') }}" rel="stylesheet">
+  <!-- Date Picker -->
+  <link href="{{ url_for('static', filename='css/bootstrap-datepicker.min.css') }}" rel="stylesheet">
+  <!-- Daterange picker -->
+  <link href="{{ url_for('static', filename='css/daterangepicker.css') }}" rel="stylesheet">
+  <!-- bootstrap wysihtml5 - text editor -->
+  <link href="{{ url_for('static', filename='css/bootstrap3-wysihtml5.min.css') }}" rel="stylesheet">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic"
+        rel="stylesheet">
+
+  <!-- Specific CSS goes HERE -->
+  {% block stylesheets %}{% endblock stylesheets %}
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  {% include "site_template/navigation.html" %}
+
+  {% include "site_template/sidebar.html" %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+
+    {% block content %}{% endblock content %}
+
+  </div>
+
+  {% include "site_template/footer.html" %}
+
+  {% include "site_template/sidebar-control.html" %}
+
+</div>
+<!-- ./wrapper -->
+
+{% include "site_template/scripts.html" %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}{% endblock %}
+
+</body>
+</html>
