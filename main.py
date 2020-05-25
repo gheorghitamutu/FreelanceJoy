@@ -7,13 +7,14 @@ import firebase_admin
 import google.oauth2.credentials
 import google.oauth2.id_token
 from firebase_admin import auth, credentials
-from flask import Flask, render_template, request, json, redirect, url_for
+from flask import Flask, render_template, request, json, redirect, url_for, Response
 from flask_caching import Cache
 from flask_sitemap import Sitemap, sitemap_page_needed
 from google.auth.transport import requests as google_requests
 from google.cloud import datastore, secretmanager
 
-import models
+import Models
+from Controller.categoriesController import *
 
 os.environ.setdefault("GCLOUD_PROJECT", "freelancejoy")
 
@@ -43,28 +44,22 @@ class App(Flask):
         firebase_admin.initialize_app(self.firebase_admin_credentials)
 
         # Database
+        # self.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:hello@127.0.0.1:3306/freelancejoy"
         self.config["SQLALCHEMY_DATABASE_URI"] = self.sql_secret
         self.config["SQLALCHEMY_ECHO"] = True
         self.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
         self.config["SQLALCHEMY_POOL_TIMEOUT"] = 100
         self.config["SQLALCHEMY_MAX_OVERFLOW"] = 10
 
-        self.db = models.db
+        self.db = Models.db
+        self.ma = Models.ma
         self.db.init_app(self)
         self.app_context().push()
 
         with self.app_context():
             self.db.create_all()  # Create database tables for our data models
 
-        # TODO: remove this!
-        # me = models.Test(
-        #     username='admin',
-        #     email='admin@example.com',
-        #     created=datetime.datetime.now(),
-        #     bio="In West Philadelphia born n raised...",
-        #     admin=False)
-        # self.db.session.add(me)
-        # self.db.session.commit()
+
 
         self.flow = None
         self.session = dict()
@@ -79,6 +74,10 @@ class App(Flask):
         self.add_url_rule('/dashboard', view_func=self.dashboard, methods=['GET'])
         self.add_url_rule('/logout', view_func=self.logout, methods=['GET'])
         self.add_url_rule('/login', view_func=self.login, methods=['GET'])
+
+
+        # Apis routes
+        self.add_url_rule('/apis/categories', view_func=self.categories, methods=['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 
         self.register_error_handler(500, self.server_error)
         self.register_error_handler(404, self.not_found)
@@ -220,6 +219,32 @@ class App(Flask):
 
         return loader
 
+    #Apis functions
+    def categories(self):
+        try:
+            if request.method == 'GET':
+                result = CategoriesController.get_categories()
+                return Response(json.dumps(result), mimetype='application/json', status=200)
+            elif request.method == 'POST':
+                body = request.get_json()
+                if CategoriesController.add_categories(body["categories"]):
+                    return Response(json.dumps({'message': 'resource created'}), mimetype='application/json', status=201)
+                else:
+                    return Response(json.dumps({'error': 'Something went wrong'}), mimetype='application/json', status=500)
+            elif request.method == 'DELETE':
+                body = request.get_json()
+                if CategoriesController.delete_categories(body["ids"]):
+                    return Response(json.dumps({'message': 'resource deleted'}), mimetype='application/json', status=201)
+                else:
+                    return Response(json.dumps({'error': 'Something went wrong'}), mimetype='application/json', status=500)
+            elif request.method == 'PUT':
+                pass
+            elif request.method == 'PATCH':
+                pass
+        except Exception as e:
+            logging.error(e)
+            return Response(json.dumps({'error': str(e)}), mimetype='application/json', status=500)
+        return Response(json.dumps({'error': 'Method not allowed'}), mimetype='application/json', status=405)
 
 app = App(__name__)
 
