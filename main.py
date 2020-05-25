@@ -233,13 +233,13 @@ class App(Flask):
             elif request.method == 'POST':
                 body = request.get_json()
                 if CategoriesController.add_categories(body["categories"]):
-                    return Response(json.dumps({'message': 'resource created'}), mimetype='application/json', status=201)
+                    return Response(json.dumps({'message': 'resources created'}), mimetype='application/json', status=201)
                 else:
                     return Response(json.dumps({'error': 'Something went wrong'}), mimetype='application/json', status=500)
             elif request.method == 'DELETE':
                 body = request.get_json()
                 if CategoriesController.delete_categories(body["ids"]):
-                    return Response(json.dumps({'message': 'resource deleted'}), mimetype='application/json', status=201)
+                    return Response(json.dumps({'message': 'resources deleted'}), mimetype='application/json', status=201)
                 else:
                     return Response(json.dumps({'error': 'Something went wrong'}), mimetype='application/json', status=500)
             elif request.method == 'PUT':
