@@ -42,7 +42,7 @@ class App(Flask):
         #        .payload.data.decode("utf-8")
 
         self.sql_secret = \
-            self.secrets.access_secret_version("projects/927858267242/secrets/SQL_AUTH_DETAILS/versions/4") \
+            self.secrets.access_secret_version("projects/927858267242/secrets/SQL_AUTH_DETAILS/versions/5") \
                 .payload.data.decode("utf-8")
 
         self.firebase_admin_credentials = credentials.Certificate(self.firebase_admin_secret)

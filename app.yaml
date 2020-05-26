@@ -28,4 +28,4 @@ resources:
   disk_size_gb: 10
 
 beta_settings:
-  cloud_sql_instances: freelancejoy:europe-west3:freelancejoydb=tcp:3307
+  cloud_sql_instances: freelancejoy:europe-west6:freelancejoyv2
