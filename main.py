@@ -13,8 +13,7 @@ from flask_sitemap import Sitemap, sitemap_page_needed
 from google.auth.transport import requests as google_requests
 from google.cloud import datastore, secretmanager
 
-import Models
-from Controller.categoriesController import *
+
 
 os.environ.setdefault("GCLOUD_PROJECT", "freelancejoy")
 
@@ -38,29 +37,9 @@ class App(Flask):
 
 
 
-        # self.sql_secret = \
-        #     self.secrets.access_secret_version("projects/927858267242/secrets/SQL_AUTH_DETAILS/versions/5") \
-        #         .payload.data.decode("utf-8")
 
         self.firebase_admin_credentials = credentials.Certificate(self.firebase_admin_secret)
         firebase_admin.initialize_app(self.firebase_admin_credentials)
-
-        # # Database
-        # # self.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:hello@127.0.0.1:3306/freelancejoy"
-        # self.config["SQLALCHEMY_DATABASE_URI"] = self.sql_secret
-        # self.config["SQLALCHEMY_ECHO"] = True
-        # self.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-        # self.config["SQLALCHEMY_POOL_TIMEOUT"] = 100
-        # self.config["SQLALCHEMY_MAX_OVERFLOW"] = 10
-        #
-        # self.db = Models.db
-        # self.ma = Models.ma
-        # self.db.init_app(self)
-        # self.app_context().push()
-        #
-        # with self.app_context():
-        #     self.db.create_all()  # Create database tables for our data models
-
 
 
         self.flow = None
@@ -77,9 +56,6 @@ class App(Flask):
         self.add_url_rule('/logout', view_func=self.logout, methods=['GET'])
         self.add_url_rule('/login', view_func=self.login, methods=['GET'])
 
-
-        # # Apis routes
-        # self.add_url_rule('/apis/categories', view_func=self.categories, methods=['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 
         self.register_error_handler(500, self.server_error)
         self.register_error_handler(404, self.not_found)
