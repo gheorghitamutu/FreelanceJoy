@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.25, for Linux (x86_64)
 --
--- Host: localhost    Database: mysql
+-- Host: localhost    database: mysql
 -- ------------------------------------------------------
 -- Server version	5.7.25-google-log
 
@@ -16,7 +16,7 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `freelanceJoy`
+-- Current database: `freelanceJoy`
 --
 
 CREATE DATABASE /*!32312 IF NOT EXISTS*/ `freelanceJoy` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_general_mysql500_ci */;

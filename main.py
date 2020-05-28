@@ -2,19 +2,21 @@ import datetime
 import logging
 import os
 from functools import wraps
-
+from config import *
 import firebase_admin
 import google.oauth2.credentials
 import google.oauth2.id_token
 from firebase_admin import auth, credentials
-from flask import Flask, render_template, request, json, redirect, url_for, Response
+from flask import Flask, render_template, request, json, redirect, url_for, Response, Blueprint
 from flask_caching import Cache
 from flask_sitemap import Sitemap, sitemap_page_needed
 from google.auth.transport import requests as google_requests
-from google.cloud import datastore, secretmanager
+from google.cloud import datastore
 
-import Models
-from Controller.categoriesController import *
+from api.endpoints.categories_endpoint import ns as categories_namespace
+from api.restplus import api
+from api.database.models import db
+
 
 os.environ.setdefault("GCLOUD_PROJECT", "freelancejoy")
 
@@ -27,44 +29,29 @@ class App(Flask):
                          template_folder=os.path.join(os.getcwd(), 'web', 'templates', 'public'))
 
         self.data_store_client = datastore.Client()
-        self.secrets = secretmanager.SecretManagerServiceClient()
-        self.client_secret = \
-            json.loads(self.secrets.access_secret_version("projects/927858267242/secrets/CLIENT_SECRET/versions/1")
-                       .payload.data.decode("utf-8"))
-        self.firebase_admin_secret = \
-            json.loads(
-                self.secrets.access_secret_version("projects/927858267242/secrets/FIREBASE_ADMIN_SECRET/versions/1")
-                    .payload.data.decode("utf-8"))
-
-        # Use this one for local debugging purposes
-        # self.sql_secret = \
-        #    self.secrets.access_secret_version("projects/927858267242/secrets/SQL_AUTH_DETAILS/versions/3") \
-        #        .payload.data.decode("utf-8")
-
-        self.sql_secret = \
-            self.secrets.access_secret_version("projects/927858267242/secrets/SQL_AUTH_DETAILS/versions/5") \
-                .payload.data.decode("utf-8")
-
-        self.firebase_admin_credentials = credentials.Certificate(self.firebase_admin_secret)
+        self.client_secret = CLIENT_SECRET
+        self.firebase_admin_secret = FIREBASE_ADMIN_SECRET
+        self.firebase_admin_credentials = FIREBASE_ADMIN_CREDENTIALS
         firebase_admin.initialize_app(self.firebase_admin_credentials)
 
-        # Database
-        # self.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:hello@127.0.0.1:3306/freelancejoy"
-        self.config["SQLALCHEMY_DATABASE_URI"] = self.sql_secret
-        self.config["SQLALCHEMY_ECHO"] = True
-        self.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-        self.config["SQLALCHEMY_POOL_TIMEOUT"] = 100
-        self.config["SQLALCHEMY_MAX_OVERFLOW"] = 10
+        # database
 
-        self.db = Models.db
-        self.ma = Models.ma
+        self.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
+        self.config["SQLALCHEMY_ECHO"] = SQLALCHEMY_ECHO
+        self.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = SQLALCHEMY_TRACK_MODIFICATIONS
+        self.config["SQLALCHEMY_POOL_TIMEOUT"] = SQLALCHEMY_POOL_TIMEOUT
+        self.config["SQLALCHEMY_MAX_OVERFLOW"] = SQLALCHEMY_MAX_OVERFLOW
+        self.config['SWAGGER_UI_DOC_EXPANSION'] = SWAGGER_UI_DOC_EXPANSION
+        self.config['RESTPLUS_VALIDATE'] = RESTPLUS_VALIDATE
+        self.config['RESTPLUS_MASK_SWAGGER'] = RESTPLUS_MASK_SWAGGER
+        self.config['ERROR_404_HELP'] = ERROR_404_HELP
 
+        self.db = db
         self.db.init_app(self)
         self.app_context().push()
 
         with self.app_context():
             self.db.create_all()  # Create database tables for our data models
-
 
 
         self.flow = None
@@ -81,9 +68,12 @@ class App(Flask):
         self.add_url_rule('/logout', view_func=self.logout, methods=['GET'])
         self.add_url_rule('/login', view_func=self.login, methods=['GET'])
 
+        # APIs endpoints
+        blueprint = Blueprint('api', __name__, url_prefix='/api')
+        api.init_app(blueprint)
+        api.add_namespace(categories_namespace)
+        self.register_blueprint(blueprint)
 
-        # Apis routes
-        self.add_url_rule('/apis/categories', view_func=self.categories, methods=['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 
         self.register_error_handler(500, self.server_error)
         self.register_error_handler(404, self.not_found)
@@ -225,32 +215,6 @@ class App(Flask):
 
         return loader
 
-    #Apis functions
-    def categories(self):
-        try:
-            if request.method == 'GET':
-                result = CategoriesController.get_categories()
-                return Response(json.dumps(result), mimetype='application/json', status=200)
-            elif request.method == 'POST':
-                body = request.get_json()
-                if CategoriesController.add_categories(body["categories"]):
-                    return Response(json.dumps({'message': 'resources created'}), mimetype='application/json', status=201)
-                else:
-                    return Response(json.dumps({'error': 'Something went wrong'}), mimetype='application/json', status=500)
-            elif request.method == 'DELETE':
-                body = request.get_json()
-                if CategoriesController.delete_categories(body["ids"]):
-                    return Response(json.dumps({'message': 'resources deleted'}), mimetype='application/json', status=201)
-                else:
-                    return Response(json.dumps({'error': 'Something went wrong'}), mimetype='application/json', status=500)
-            elif request.method == 'PUT':
-                pass
-            elif request.method == 'PATCH':
-                pass
-        except Exception as e:
-            logging.error(e)
-            return Response(json.dumps({'error': str(e)}), mimetype='application/json', status=500)
-        return Response(json.dumps({'error': 'Method not allowed'}), mimetype='application/json', status=405)
 
 app = App(__name__)
 
