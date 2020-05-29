@@ -16,7 +16,7 @@ from google.cloud import datastore
 from api.endpoints.categories_endpoint import ns as categories_namespace
 from api.restplus import api
 from api.database.models import db
-
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 os.environ.setdefault("GCLOUD_PROJECT", "freelancejoy")
 
@@ -27,7 +27,7 @@ class App(Flask):
                          static_url_path='',
                          static_folder=os.path.join(os.getcwd(), 'web', 'static'),
                          template_folder=os.path.join(os.getcwd(), 'web', 'templates', 'public'))
-
+        self.wsgi_app = ProxyFix(self.wsgi_app)
         self.data_store_client = datastore.Client()
         self.client_secret = CLIENT_SECRET
         self.firebase_admin_secret = FIREBASE_ADMIN_SECRET
@@ -53,7 +53,6 @@ class App(Flask):
         with self.app_context():
             self.db.create_all()  # Create database tables for our data models
 
-
         self.flow = None
         self.session = dict()
 
@@ -73,7 +72,6 @@ class App(Flask):
         api.init_app(blueprint)
         api.add_namespace(categories_namespace)
         self.register_blueprint(blueprint)
-
 
         self.register_error_handler(500, self.server_error)
         self.register_error_handler(404, self.not_found)
