@@ -143,6 +143,7 @@ class App(Flask):
                 self.session['current_user']['custom_claims'] = userInfo.custom_claims
                 self.session['current_user']['tenant_id'] = userInfo.tenant_id
 
+
             except ValueError as exc:
                 # This will be raised if the token is expired or any other
                 # verification checks fail.

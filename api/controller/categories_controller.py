@@ -15,7 +15,7 @@ class CategoriesController:
     @staticmethod
     def add_categories(categories_list):
         for category in categories_list:
-            row = Category(name=category['name'])
+            row = Category(category['name'])
             db.session.add(row)
             db.session.commit()
 

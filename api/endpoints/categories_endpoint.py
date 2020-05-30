@@ -4,7 +4,6 @@ from flask import request
 from flask_restplus import Resource
 from api.restplus import api
 from api.controller.categories_controller import CategoriesController
-
 import logging
 from api.serializers import category_array, category, ids
 
@@ -23,6 +22,7 @@ class CategoryCollection(Resource):
         Returns list of  categories.
         """
         categories = CategoriesController.get_categories()
+
         return categories
 
     @api.response(201, 'Categories successfully added.')
@@ -32,8 +32,9 @@ class CategoryCollection(Resource):
         Adds a new list of categories
         """
         data = request.json
-        CategoriesController.add_categories(data)
-        return None, 201
+        CategoriesController.add_categories(data["categories"])
+        message = "resources created"
+        return {"message" : message}, 201
 
     @api.response(204, 'Categories successfully deleted.')
     @api.expect(ids)

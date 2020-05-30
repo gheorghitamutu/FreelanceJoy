@@ -19,7 +19,7 @@ def method_not_allowed(e):
 @api.errorhandler(NoResultFound)
 def database_not_found_error_handler(e):
     log.warning(traceback.format_exc())
-    return {'message': 'A database result was required but none was found.'}, 404
+    return {'message': e.message}, 404
 
 
 @api.errorhandler
