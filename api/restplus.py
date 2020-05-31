@@ -19,20 +19,24 @@ def method_not_allowed(e):
 
 
 @api.errorhandler(NoResultFound)
-def database_not_found_error_handler(e):
-    log.warning(e)
+def database_result_not_found_error_handler(e):
+    log.exception( e.args[0])
     return {'message': e.args[0]}, 404
 
 @api.errorhandler(IntegrityError)
 def integrity_error_handler(e):
-    message = 'Resource already exists'
-    log.error(e)
-    log.exception(message)
-    return {'message': message}, 409
+    log.exception(e)
+    log.info(e.statement)
+    return {'message': e.statement}, 409
+
+@api.errorhandler(AttributeError)
+def obj_has_no_attribute(e):
+    log.exception(e.args[0])
+    return {'message': e.args[0]}, 400
 
 @api.errorhandler
 def default_error_handler(e):
     message = 'Server error'
-    log.error(e)
-    log.exception(message)
+    log.info(message)
+    log.exception(e)
     return {'message': message}, 500

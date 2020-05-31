@@ -19,8 +19,8 @@ DATABASE_SECRET = \
     secrets.access_secret_version("projects/927858267242/secrets/SQL_AUTH_DETAILS/versions/5") \
         .payload.data.decode("utf-8")
 
-# SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:hello@127.0.0.1:3306/freelancejoy"
-SQLALCHEMY_DATABASE_URI = DATABASE_SECRET
+SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:hello@127.0.0.1:3306/freelancejoy"
+# SQLALCHEMY_DATABASE_URI = DATABASE_SECRET
 SQLALCHEMY_ECHO = True
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SQLALCHEMY_POOL_TIMEOUT = 100

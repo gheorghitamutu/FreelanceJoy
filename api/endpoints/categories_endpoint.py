@@ -25,7 +25,7 @@ class CategoryCollection(Resource):
         return categories
 
     @api.response(201, 'Category successfully created.')
-    @api.response(409, 'Category with id <id> already exists')
+    @api.response(409, 'Category already exists')
     @api.expect(category_input)
     def post(self):
         """
@@ -58,21 +58,22 @@ class CategoryItem(Resource):
         """
         return get_category(id)
 
-    @api.response(204, 'Category successfully updated.')
-    @api.expect(category_input)
-    def put(self, id):
+    @api.response(200, 'Category successfully updated')
+    @api.response(400, 'Bad request')
+    def patch(self, id):
         """
         Updates a category.
 
         """
         data = request.json
-        replace_category(id, data)
-        return None, 204
+        update_category(id, data)
+        return {'message': f'Category with with id {id} succesfully updated'}, 200
 
-    @api.response(204, 'Category successfully deleted.')
+    @api.response(200, 'Category successfully deleted.')
+    @api.response(404, 'Category not found')
     def delete(self, id):
         """
         Deletes a category.
         """
         delete_category(id)
-        return None, 204
+        return {'message': f'Category with with id {id} succesfully deleted '}, 200
