@@ -13,7 +13,8 @@ from flask_sitemap import Sitemap, sitemap_page_needed
 from google.auth.transport import requests as google_requests
 from google.cloud import datastore
 
-from api.endpoints.categories_endpoint import ns as categories_namespace
+from api.endpoints.categories_endpoint import categories_namespace
+from api.endpoints.jobs_endpoint import jobs_namespace
 from api.restplus import api
 from api.database.models import db
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -71,6 +72,7 @@ class App(Flask):
         blueprint = Blueprint('api', __name__, url_prefix='/api')
         api.init_app(blueprint)
         api.add_namespace(categories_namespace)
+        api.add_namespace(jobs_namespace)
         self.register_blueprint(blueprint)
 
         self.register_error_handler(500, self.server_error)

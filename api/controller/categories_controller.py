@@ -1,6 +1,6 @@
 import logging
 
-from api.database.models import *
+from api.database.models import Category
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 from sqlalchemy.orm.exc import NoResultFound

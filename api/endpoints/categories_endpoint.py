@@ -8,10 +8,10 @@ from api.serializers import category_input, category_output
 
 log = logging.getLogger(__name__)
 
-ns = api.namespace('categories', description='Operations related to project categories')
+categories_namespace = api.namespace('categories', description='Operations related to project categories')
 
 
-@ns.route('/')
+@categories_namespace.route('/')
 class CategoryCollection(Resource):
 
     @api.marshal_list_with(category_output)
@@ -46,7 +46,7 @@ class CategoryCollection(Resource):
         return None, 204
 
 
-@ns.route('/<int:id>')
+@categories_namespace.route('/<int:id>')
 @api.response(404, 'Category not found.')
 class CategoryItem(Resource):
 
