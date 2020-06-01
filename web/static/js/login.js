@@ -18,16 +18,23 @@ firebase.analytics();
 // [START gae_python37_auth_javascript]
 window.addEventListener('load', function() {
     let sign_out = document.getElementById('sign-out');
+    let sign_out_sidebar = document.getElementById('sign-out-sidebar');
     let user_data = document.getElementById('user-data');
-    let sig_in_status = document.getElementById('sign-in-status');
+    let sign_in_status = document.getElementById('sign-in-status');
     let account_details = document.getElementById('account-details');
 
+    let logout = function() {
+        firebase.auth().signOut();
+        document.cookie = "token=";
+        window.location.href = '/logout';
+    }
+
     if (sign_out !== null) {
-        sign_out.onclick = function() {
-            firebase.auth().signOut();
-            document.cookie = "token=";
-            window.location.href = '/logout';
-        }
+        sign_out.onclick = logout;
+    }
+
+    if (sign_out_sidebar !== null) {
+        sign_out_sidebar.onclick = logout;
     }
 
     // FirebaseUI config.
@@ -49,16 +56,16 @@ window.addEventListener('load', function() {
     };
 
     firebase.auth().onAuthStateChanged(function(user) {
+
+        console.log(`Cookie: ${document.cookie}`);
+        console.log(`User: ${user}`);
+
         if (user) {
-            // User is signed in, so display the "sign out" button and login info.
-            if (sign_out !== null) {
-                sign_out.style.display = 'block';
-            }
             if (user_data !== null) {
                 user_data.style.display = 'block';
             }
-            if (sig_in_status !== null) {
-                sig_in_status.textContent = 'Signed in';
+            if (sign_in_status !== null) {
+                sign_in_status.textContent = 'Signed in';
             }
             if (account_details !== null) {
                 account_details.textContent = JSON.stringify(user, null, '  ');
@@ -75,21 +82,23 @@ window.addEventListener('load', function() {
                 document.cookie = "token=" + token;
             });
 
-        } else {
-            // User is signed out.
+        }
+        else {
+            try {
             // Initialize the FirebaseUI Widget using Firebase.
             var ui = new firebaseui.auth.AuthUI(firebase.auth());
             // Show the Firebase login button.
             ui.start('#firebaseui-auth-container', uiConfig);
-            // Update the login state indicators.
-            if (sign_out !== null) {
-                sign_out.style.display = 'none';
             }
+            catch(error) {
+                console.log(error);
+            }
+            // Update the login state indicators.
             if (user_data !== null) {
                 user_data.style.display = 'none';
             }
-            if (sig_in_status !== null) {
-                sig_in_status.textContent = 'Signed out';
+            if (sign_in_status !== null) {
+                sign_in_status.textContent = 'Signed out';
             }
             if (account_details !== null) {
                 account_details.textContent = '';
