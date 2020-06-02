@@ -1,6 +1,6 @@
 import logging
 
-from api.database.models import Category
+from api.database.models import Category, db
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 from sqlalchemy.orm.exc import NoResultFound
@@ -12,7 +12,7 @@ def check_existence(category_id):
     try:
         return Category.query.filter(Category.id == category_id).one()
     except NoResultFound as e:
-        raise NoResultFound(f"Category with id {category_id} doesn't exist") from None
+        raise NoResultFound(f"Category with id {category_id} doesn't exist") from e
 
 
 def get_category(category_id):
@@ -26,18 +26,18 @@ def get_categories():
 
 def add_category(category_obj):
     try:
-        row = Category(category_obj['name'])
-        db.session.add(row)
+        category = Category(category_obj['name'])
+        db.session.add(category)
         db.session.commit()
+        return category.id
     except IntegrityError as e:
-        raise IntegrityError(f"Category with name {category_obj['name']} already exists", None, None) from None
+        raise IntegrityError(f"Category with name {category_obj['name']} already exists", None, None) from e
 
 
 def delete_category(category_id):
     existent_category = check_existence(category_id)
-    if existent_category:
-        db.session.delete(existent_category)
-        db.session.commit()
+    db.session.delete(existent_category)
+    db.session.commit()
 
 
 def delete_all_categories():

@@ -1,8 +1,8 @@
+from config import *
 import datetime
 import logging
 import os
 from functools import wraps
-from config import *
 import firebase_admin
 import google.oauth2.credentials
 import google.oauth2.id_token
@@ -15,6 +15,9 @@ from google.cloud import datastore
 
 from api.endpoints.categories_endpoint import categories_namespace
 from api.endpoints.jobs_endpoint import jobs_namespace
+from api.endpoints.attachments_endpoing import attachments_namespace
+
+
 from api.restplus import api
 from api.database.models import db
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -73,6 +76,7 @@ class App(Flask):
         api.init_app(blueprint)
         api.add_namespace(categories_namespace)
         api.add_namespace(jobs_namespace)
+        api.add_namespace(attachments_namespace)
         self.register_blueprint(blueprint)
 
         self.register_error_handler(500, self.server_error)

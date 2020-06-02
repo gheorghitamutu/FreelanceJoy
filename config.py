@@ -4,7 +4,6 @@ from firebase_admin import credentials
 
 secrets = secretmanager.SecretManagerServiceClient()
 
-
 CLIENT_SECRET = \
     json.loads(secrets.access_secret_version("projects/927858267242/secrets/CLIENT_SECRET/versions/1")
                .payload.data.decode("utf-8"))
@@ -17,6 +16,9 @@ FIREBASE_ADMIN_CREDENTIALS = credentials.Certificate(FIREBASE_ADMIN_SECRET)
 
 DATABASE_SECRET = \
     secrets.access_secret_version("projects/927858267242/secrets/SQL_AUTH_DETAILS/versions/5") \
+        .payload.data.decode("utf-8")
+
+BUCKET_NAME =  secrets.access_secret_version("projects/927858267242/secrets/BUCKET_NAME/versions/1") \
         .payload.data.decode("utf-8")
 
 # SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:hello@127.0.0.1:3306/freelancejoy"
