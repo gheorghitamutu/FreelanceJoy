@@ -5,8 +5,7 @@ from api.controller.jobs_controller import check_job_existence
 from sqlalchemy.orm.exc import NoResultFound
 from api.controller.files_utility import GCloudStorage
 from config import BUCKET_NAME
-
-
+import base64
 log = logging.getLogger(__name__)
 storage_manager = GCloudStorage(log, BUCKET_NAME)
 storage_root_directory = "freelance"
@@ -28,7 +27,8 @@ def add_attachment(data):
     file_path = f"{storage_root_directory}/{data['user_email']}/{data['job_id']}/{attachments_directory}/{data['file_name']}"
     try:
         if storage_manager.check_file_existence(file_path) is False:
-            link = storage_manager.upload_file(file_path, data['content_as_string'], data['file_type'])
+            content = base64.b64decode(data['content_as_string'])
+            link = storage_manager.upload_file(file_path, content, data['file_type'])
             if link:
                 attachment = Attachment()
                 check_job_existence(data['job_id'])
@@ -44,9 +44,6 @@ def add_attachment(data):
     except IntegrityError as e:
         storage_manager.delete_file(file_path)
         raise IntegrityError(f"Attachment with name {data['file_name']} already exists", None, None) from e
-
-
-
 
 
 def delete_attachment(attachment_id):
