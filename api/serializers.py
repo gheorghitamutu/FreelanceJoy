@@ -90,7 +90,7 @@ job_output_complete = api.inherit('Job Output Complete', job_output, {
 })
 
 delivered_project_asset_input = api.model('Project Asset Input', {
-    'user_email': fields.String(required=True),
+    'employer_email': fields.String(required=True),
     'project_id': fields.Integer(required=True),
     'job_id': fields.Integer(required=True),
     'message': fields.String(required=True),

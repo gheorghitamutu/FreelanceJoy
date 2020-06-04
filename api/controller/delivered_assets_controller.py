@@ -13,7 +13,7 @@ from config import BUCKET_NAME
 log = logging.getLogger(__name__)
 storage_manager = GCloudStorage(log, BUCKET_NAME)
 storage_root_directory = "freelance"
-delivered_project_assets_directory = "project"
+directory = "project"
 
 
 def get_delivered_project_asset(delivered_project_asset_id):
@@ -24,7 +24,7 @@ def get_delivered_project_asset(delivered_project_asset_id):
 
 
 def add_delivered_project_asset(data):
-    file_path = f"{storage_root_directory}/{data['user_email']}/{data['job_id']}/{delivered_project_assets_directory}/{data['file_name']}"
+    file_path = f"{storage_root_directory}/{data['employer_email']}/{data['job_id']}/{directory}/{data['file_name']}"
     try:
         if storage_manager.check_file_existence(file_path) is False:
             content = base64.b64decode(data['content_as_string'])
