@@ -29,9 +29,13 @@ class Job(db.Model):
 
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
     category = db.relationship('Category', backref=db.backref('jobs', lazy='dynamic'))
+
+    project = db.relationship('Project', backref=db.backref('jobs', lazy=False))
+
+    biddings = db.relationship('Bidding', backref=db.backref('jobs', lazy=True))
     attachments = db.relationship('Attachment', backref=db.backref('jobs', lazy=True))
 
-    def __init__(self,  user_email=None, title=None, description=None,
+    def __init__(self, user_email=None, title=None, description=None,
                  payment=None,
                  created_at=None):
         self.user_email = user_email
@@ -39,7 +43,6 @@ class Job(db.Model):
         self.description = description
         self.payment = payment
         self.created_at = created_at
-
 
     def __repr__(self):
         return "Job {}".format(self.title)
@@ -61,3 +64,56 @@ class Attachment(db.Model):
 
     def __repr__(self):
         return "Attachment {}".format(self.name)
+
+
+class DeliveredProjectAsset(db.Model):
+    __tablename__ = "projects_delivered_assets"
+    id = db.Column(db.Integer, primary_key=True)
+    link = db.Column(db.String)
+    file_name = db.Column(db.String)
+    created_at = db.Column(db.TIMESTAMP)
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'))
+    message = db.Column(db.String)
+
+    def __init__(self, link=None, file_name=None, created_at=None):
+        self.link = link
+        self.file_name = file_name
+        self.created_at = created_at
+
+    def __repr__(self):
+        return "Delivered project asset {}".format(self.name)
+
+
+class Project(db.Model):
+    __tablename__ = "projects"
+    id = db.Column(db.Integer, primary_key=True)
+    deadline = db.Column(db.TIMESTAMP)
+    freelancer_email = db.Column(db.String)
+    created_at = db.Column(db.String)
+    job_id = db.Column(db.Integer, db.ForeignKey('jobs.id'))
+    project = db.relationship('DeliveredProjectAsset', backref=db.backref('projects', lazy=False))
+
+    def __init__(self, deadline=None, freelancer_email=None, created_at=None):
+        self.deadline = deadline
+        self.freelancer_email = freelancer_email
+        self.created_at = created_at
+
+    def __repr__(self):
+        return "Project {}".format(self.id)
+
+
+class Bidding(db.Model):
+    __tablename__ = "biddings"
+    id = db.Column(db.Integer, primary_key=True)
+    freelancer_email = db.Column(db.String)
+    message = db.Column(db.TEXT)
+    created_at = db.Column(db.TIMESTAMP)
+    job_id = db.Column(db.Integer, db.ForeignKey('jobs.id'))
+
+    def __init__(self, freelancer_email=None, message=None, created_at=None):
+        self.freelancer_email = freelancer_email
+        self.message = message
+        self.created_at = created_at
+
+    def __repr__(self):
+        return "Bidding {}".format(self.id)

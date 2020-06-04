@@ -1,26 +1,28 @@
-from config import *
 import datetime
 import logging
 import os
 from functools import wraps
+
 import firebase_admin
 import google.oauth2.credentials
 import google.oauth2.id_token
-from firebase_admin import auth, credentials
-from flask import Flask, render_template, request, json, redirect, url_for, Response, Blueprint
+from firebase_admin import auth
+from flask import Flask, render_template, request, redirect, url_for, Blueprint
 from flask_caching import Cache
 from flask_sitemap import Sitemap, sitemap_page_needed
 from google.auth.transport import requests as google_requests
 from google.cloud import datastore
+from werkzeug.middleware.proxy_fix import ProxyFix
 
+from api.database.models import db
+from api.endpoints.attachments_endpoing import attachments_namespace
 from api.endpoints.categories_endpoint import categories_namespace
 from api.endpoints.jobs_endpoint import jobs_namespace
-from api.endpoints.attachments_endpoing import attachments_namespace
-
-
+from api.endpoints.biddings_endpoint import biddings_namespace
+from api.endpoints.projects_endpoint import projects_namespace
+from api.endpoints.delivered_assets_endpoint import projects_assets_namespace
 from api.restplus import api
-from api.database.models import db
-from werkzeug.middleware.proxy_fix import ProxyFix
+from config import *
 
 os.environ.setdefault("GCLOUD_PROJECT", "freelancejoy")
 
@@ -77,6 +79,9 @@ class App(Flask):
         api.add_namespace(categories_namespace)
         api.add_namespace(jobs_namespace)
         api.add_namespace(attachments_namespace)
+        api.add_namespace(biddings_namespace)
+        api.add_namespace(projects_namespace)
+        api.add_namespace(projects_assets_namespace)
         self.register_blueprint(blueprint)
 
         self.register_error_handler(500, self.server_error)

@@ -5,8 +5,6 @@ from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 from sqlalchemy.orm.exc import NoResultFound
 
-log = logging.getLogger(__name__)
-
 
 def check_existence(category_id):
     try:
