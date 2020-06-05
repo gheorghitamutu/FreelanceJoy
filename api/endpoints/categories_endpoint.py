@@ -3,7 +3,7 @@ from flask_restplus import Resource
 from api.restplus import api
 from api.controller.categories_controller import *
 import logging
-from api.serializers import category_input, category_output, location, message, bad_request
+from api.utilities.serializers import category_input, category_output, location, message, bad_request
 
 log = logging.getLogger(__name__)
 

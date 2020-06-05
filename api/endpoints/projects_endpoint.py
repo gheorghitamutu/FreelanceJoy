@@ -1,11 +1,9 @@
-import logging
-
 from flask import request
 from flask_restplus import Resource
 
 from api.controller.projects_controller import *
 from api.restplus import api
-from api.serializers import project_input, project_output, message, bad_request
+from api.utilities.serializers import project_input, project_output, message, bad_request, location
 
 projects_namespace = api.namespace('projects', description='Operations related to projects')
 
@@ -14,7 +12,7 @@ projects_namespace = api.namespace('projects', description='Operations related t
 @api.response(404, 'Project not found.', message)
 class ProjectCollection(Resource):
 
-    @api.response(201, 'Project successfully created.')
+    @api.response(201, 'Project successfully created.', location)
     @api.response(409, 'Project already exists.', message)
     @api.response(400, 'Bad request.', bad_request)
     @api.expect(project_input)

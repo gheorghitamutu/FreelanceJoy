@@ -91,7 +91,7 @@ class Project(db.Model):
     freelancer_email = db.Column(db.String)
     created_at = db.Column(db.String)
     job_id = db.Column(db.Integer, db.ForeignKey('jobs.id'))
-    project = db.relationship('DeliveredProjectAsset', backref=db.backref('projects', lazy=False))
+    delivered_assets = db.relationship('DeliveredProjectAsset', backref=db.backref('projects', lazy=True))
 
     def __init__(self, deadline=None, freelancer_email=None, created_at=None):
         self.deadline = deadline

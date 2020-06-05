@@ -2,7 +2,7 @@ from flask import request
 from flask_restplus import Resource
 from api.restplus import api
 
-from api.serializers import attachment_input, attachment_output, message, location, bad_request
+from api.utilities.serializers import attachment_input, attachment_output, message, location, bad_request
 from api.controller.attachments_controller import *
 
 log = logging.getLogger(__name__)

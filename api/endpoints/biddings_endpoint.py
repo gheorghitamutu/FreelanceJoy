@@ -1,11 +1,9 @@
-import logging
-
 from flask import request
 from flask_restplus import Resource
 
 from api.controller.biddings_controller import *
 from api.restplus import api
-from api.serializers import bidding_input, bidding_output, message, bad_request
+from api.utilities.serializers import bidding_input, bidding_output, message, bad_request, location
 
 biddings_namespace = api.namespace('biddings', description='Operations related to biddings')
 
@@ -14,7 +12,7 @@ biddings_namespace = api.namespace('biddings', description='Operations related t
 @api.response(404, 'Bidding not found.', message)
 class BiddingCollection(Resource):
 
-    @api.response(201, 'Bidding successfully created.')
+    @api.response(201, 'Bidding successfully created.', location)
     @api.response(409, 'Bidding already exists.', message)
     @api.response(400, 'Bad request.', bad_request)
     @api.expect(bidding_input)

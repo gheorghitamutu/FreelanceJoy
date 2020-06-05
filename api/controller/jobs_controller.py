@@ -1,7 +1,6 @@
 import logging
 
-from api.database.models import Job, db
-from sqlalchemy.exc import IntegrityError
+from api.database.models import Job, db, Category, Project
 
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -24,7 +23,19 @@ def add_job(job_obj):
     return job.id
 
 
-def get_jobs(page, per_page):
+def get_jobs(page, per_page, category_id, user_email, freelancer_flag):
+    if category_id is not None:
+        jobs_ids_with_project = [int(project.job_id) for project in Project.query.all()]
+        jobs = Job.query.join(Category).filter(Job.id.notin_(jobs_ids_with_project)).order_by(Job.created_at)
+        return jobs.paginate(page, per_page, error_out=False)
+
+    if user_email is not None:
+        if freelancer_flag is True:
+            jobs = Job.query.join(Project).filter(Project.freelancer_email == user_email)
+            return jobs.paginate(page, per_page, error_out=False)
+        else:
+            return Job.query.filter(Job.user_email == user_email).paginate(page, per_page, error_out=False)
+
     return Job.query.paginate(page, per_page, error_out=False)
 
 

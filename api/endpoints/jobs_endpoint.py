@@ -2,17 +2,14 @@ from flask import request
 from flask_restplus import Resource
 from api.restplus import api
 from api.controller.jobs_controller import *
-import logging
-from api.serializers import job_input, job_output, job_output_complete, message, bad_request, page_of_jobs
-from api.parsers import pagination_arguments
+from api.utilities.serializers import job_input, job_output, message, bad_request, page_of_jobs, location
+from api.utilities.parsers import pagination_arguments
 
-log = logging.getLogger(__name__)
 
 jobs_namespace = api.namespace('jobs', description='Operations related to jobs')
 
 
 @jobs_namespace.route('/')
-@api.response(404, 'Job not found.', message)
 class JobCollection(Resource):
 
     @api.expect(pagination_arguments)
@@ -26,11 +23,14 @@ class JobCollection(Resource):
         args = pagination_arguments.parse_args(request)
         page = args.get('page', 1)
         per_page = args.get('per_page', 10)
+        category_id = args.get('category_id', None)
+        user_email = args.get('user_email', None)
+        freelacer_flag = args.get('freelancer_flag', False)
 
-        jobs_page = get_jobs(page, per_page)
+        jobs_page = get_jobs(page, per_page, category_id, user_email, freelacer_flag)
         return jobs_page
 
-    @api.response(201, 'Job successfully created.')
+    @api.response(201, 'Job successfully created.', location)
     @api.response(409, 'Job already exists', message)
     @api.response(400, 'Bad request', bad_request)
     @api.expect(job_input)
@@ -47,7 +47,7 @@ class JobCollection(Resource):
 @jobs_namespace.route('/<int:id>')
 class JobItem(Resource):
 
-    @api.marshal_with(job_output_complete)
+    @api.marshal_with(job_output)
     @api.response(200, 'Jobs successfully queried.')
     def get(self, id):
         """

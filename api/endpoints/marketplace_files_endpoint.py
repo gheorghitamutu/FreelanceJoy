@@ -1,10 +1,9 @@
-from api.controller.files_utility import *
-from urllib.parse import urlunparse
+from api.utilities.files_utility import *
 from flask import request
 from flask_restplus import Resource
 from api.restplus import api
 import logging
-from api.serializers import marketplace_file, location, bad_request
+from api.utilities.serializers import marketplace_file, location, bad_request
 
 log = logging.getLogger(__name__)
 

@@ -4,7 +4,7 @@ import logging
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
-from api.controller.files_utility import GCloudStorage
+from api.utilities.files_utility import GCloudStorage
 from api.controller.jobs_controller import check_job_existence
 from api.database.models import Attachment, db
 from config import BUCKET_NAME
