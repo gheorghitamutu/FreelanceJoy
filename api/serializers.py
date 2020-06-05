@@ -69,7 +69,7 @@ job_input = api.model('Job Input', {
     'description': fields.String(required=True),
     'payment': fields.Fixed(decimals=5, required=True),
     'created_at': fields.DateTime(required=False),
-    'category_id': fields.String(attribute='category.id', required=True)
+    'category_id': fields.Integer(required=True)
 })
 
 job_output = api.model('Job Ouput', {
@@ -107,4 +107,16 @@ delivered_project_asset_output = api.model('Project Asset Output', {
     'file_name': fields.String(required=True),
     'link': fields.String(required=True),
     'created_at': fields.String(required=True)
+})
+
+
+pagination = api.model('A page of results', {
+    'page': fields.Integer(description='Number of this page of results'),
+    'pages': fields.Integer(description='Total number of pages of results'),
+    'per_page': fields.Integer(description='Number of items per page of results'),
+    'total': fields.Integer(description='Total number of results'),
+})
+
+page_of_jobs = api.inherit('Page of jobs', pagination, {
+    'items': fields.List(fields.Nested(job_output_complete))
 })

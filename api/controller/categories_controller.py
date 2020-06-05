@@ -50,7 +50,5 @@ def update_category(category_id, category_obj):
     for key in category_obj:
         if hasattr(category, key):
             setattr(category, key, category_obj[key])
-        else:
-            raise AttributeError(f"Input obj has no attribute '{key}'")
     db.session.add(category)
     db.session.commit()

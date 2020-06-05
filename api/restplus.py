@@ -29,10 +29,7 @@ def integrity_error_handler(e):
     log.info(e.statement)
     return {'message': e.statement}, 409
 
-@api.errorhandler(AttributeError)
-def obj_has_no_attribute(e):
-    log.exception(e.args[0])
-    return {'message': e.args[0]}, 400
+
 
 @api.errorhandler
 def default_error_handler(e):

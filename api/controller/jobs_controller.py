@@ -24,8 +24,8 @@ def add_job(job_obj):
     return job.id
 
 
-def get_jobs():
-    return Job.query.all()
+def get_jobs(page, per_page):
+    return Job.query.paginate(page, per_page, error_out=False)
 
 
 def get_job(job_id):
