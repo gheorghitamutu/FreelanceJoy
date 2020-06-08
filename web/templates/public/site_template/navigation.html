@@ -4,7 +4,7 @@
     <!-- mini logo for sidebar mini 50x50 pixels -->
     <span class="logo-mini"><b>A</b>LT</span>
     <!-- logo for regular state and mobile devices -->
-    <span class="logo-lg"><b>Admin</b>LTE</span>
+    <span class="logo-lg"><b>Dashboard</b></span>
   </a>
   <!-- Header Navbar: style can be found in header.less -->
   <nav class="navbar navbar-static-top">
@@ -36,7 +36,7 @@
                       Support Team
                       <small><i class="fa fa-clock-o"></i> 5 mins</small>
                     </h4>
-                    <p>Why not buy a new awesome theme?</p>
+                    <p>Here's your ticket resolution.</p>
                   </a>
                 </li>
                 <!-- end message -->
@@ -47,10 +47,10 @@
                            src="{{ url_for('static', filename='images/user3-128x128.jpg') }}">
                     </div>
                     <h4>
-                      AdminLTE Design Team
+                      Design Team
                       <small><i class="fa fa-clock-o"></i> 2 hours</small>
                     </h4>
-                    <p>Why not buy a new awesome theme?</p>
+                    <p>Get the latest updates regarding your project!</p>
                   </a>
                 </li>
                 <li>
@@ -63,7 +63,7 @@
                       Developers
                       <small><i class="fa fa-clock-o"></i> Today</small>
                     </h4>
-                    <p>Why not buy a new awesome theme?</p>
+                    <p>There's not enough space on...</p>
                   </a>
                 </li>
                 <li>
@@ -76,7 +76,7 @@
                       Sales Department
                       <small><i class="fa fa-clock-o"></i> Yesterday</small>
                     </h4>
-                    <p>Why not buy a new awesome theme?</p>
+                    <p>Get the latest stats for last week!</p>
                   </a>
                 </li>
                 <li>
@@ -89,7 +89,7 @@
                       Reviewers
                       <small><i class="fa fa-clock-o"></i> 2 days</small>
                     </h4>
-                    <p>Why not buy a new awesome theme?</p>
+                    <p>Here's our feedback regarding your latest features!</p>
                   </a>
                 </li>
               </ul>
@@ -220,7 +220,7 @@
         <!-- User Account: style can be found in dropdown.less -->
         <li class="dropdown user user-menu">
           <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-            <img alt="User Image" class="user-image" src="{{ url_for('static', filename='images/user2-160x160.jpg') }}">
+            <img alt="User Image" class="user-image" src="{{ session['claims']['picture'] }}">
             <span class="hidden-xs">
                 <!-- current_user.username -->
               </span>
@@ -228,19 +228,17 @@
           <ul class="dropdown-menu">
             <!-- User image -->
             <li class="user-header">
-              <img alt="User Image" class="img-circle"
-                   src="{{ url_for('static', filename='images/user2-160x160.jpg') }}">
-
+              <img alt="User Image" class="img-circle" src="{{ session['claims']['picture'] }}">
               <p>
-                <!-- current_user.username
-                <small> current_user.email </small>-->
+                {{ session['claims']['name'] }}
+                <small> {{ session['claims']['email'] }} </small>
               </p>
             </li>
             <!-- Menu Body -->
             <li class="user-body">
               <div class="row">
                 <div class="col-xs-4 text-center">
-                  <a href="#">Followers</a>
+                  <a href="#">Projects</a>
                 </div>
                 <div class="col-xs-4 text-center">
                   <a href="#">Sales</a>

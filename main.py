@@ -16,11 +16,11 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from api.database.models import db
 from api.endpoints.attachments_endpoing import attachments_namespace
-from api.endpoints.categories_endpoint import categories_namespace
-from api.endpoints.jobs_endpoint import jobs_namespace
 from api.endpoints.biddings_endpoint import biddings_namespace
-from api.endpoints.projects_endpoint import projects_namespace
+from api.endpoints.categories_endpoint import categories_namespace
 from api.endpoints.delivered_assets_endpoint import projects_assets_namespace
+from api.endpoints.jobs_endpoint import jobs_namespace
+from api.endpoints.projects_endpoint import projects_namespace
 from api.restplus import api
 from config import *
 
@@ -153,7 +153,6 @@ class App(Flask):
                 self.session['current_user']['provider_data'] = userInfo.provider_data
                 self.session['current_user']['custom_claims'] = userInfo.custom_claims
                 self.session['current_user']['tenant_id'] = userInfo.tenant_id
-
 
             except ValueError as exc:
                 # This will be raised if the token is expired or any other
