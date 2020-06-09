@@ -22,12 +22,11 @@ def get_attachment(attachment_id):
         raise NoResultFound(f"Attachment with id {attachment_id} doesn't exist") from e
 
 
-def add_attachment(data):
+def add_attachment(file, data):
     file_path = f"{storage_root_directory}/{data['user_email']}/{data['job_id']}/{attachments_directory}/{data['file_name']}"
     try:
         if storage_manager.check_file_existence(file_path) is False:
-            content = base64.b64decode(data['content_as_string'])
-            link = storage_manager.upload_file(file_path, content, data['file_type'])
+            link = storage_manager.upload_file(file_path, file, data['file_type'])
             if link:
                 attachment = Attachment()
                 check_job_existence(data['job_id'])

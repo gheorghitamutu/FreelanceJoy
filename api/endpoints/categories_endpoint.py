@@ -1,8 +1,10 @@
-from flask import request
-from flask_restplus import Resource
-from api.restplus import api
-from api.controller.categories_controller import *
 import logging
+
+from flask import request
+from flask_restx import Resource
+
+from api.controller.categories_controller import *
+from api.restplus import api
 from api.utilities.serializers import category_input, category_output, location, message, bad_request
 
 log = logging.getLogger(__name__)

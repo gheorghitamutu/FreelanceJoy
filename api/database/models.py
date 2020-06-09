@@ -117,3 +117,26 @@ class Bidding(db.Model):
 
     def __repr__(self):
         return "Bidding {}".format(self.id)
+
+
+class MarketplaceProject(db.Model):
+    __tablename__ = "projects_for_sale"
+    id = db.Column(db.Integer, primary_key=True)
+    user_email = db.Column(db.String)
+    partner_email = db.Column(db.String)
+    name = db.Column(db.String)
+    price = db.Column(db.Numeric(precision=5, scale=2))
+    description = db.Column(db.String)
+    created_at = db.Column(db.TIMESTAMP)
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
+    assets = db.relationship('ProductAsset', backref=db.backref('projects_for_sale', lazy=True))
+
+
+class ProductAsset(db.Model):
+    __tablename__ = "projects_for_sale_assets"
+    id = db.Column(db.Integer, primary_key=True)
+    file_name = db.Column(db.String)
+    link = db.Column(db.String)
+    project_for_sale_id = db.Column(db.Integer, db.ForeignKey('projects_for_sale.id'))
+    asset_type = db.Column(db.Enum('image', 'archive'))
+    created_at = db.Column(db.DateTime)

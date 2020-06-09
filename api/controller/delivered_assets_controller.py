@@ -23,12 +23,11 @@ def get_delivered_project_asset(delivered_project_asset_id):
         raise NoResultFound(f"delivered_project_asset with id {delivered_project_asset_id} doesn't exist") from e
 
 
-def add_delivered_project_asset(data):
+def add_delivered_project_asset(file, data):
     file_path = f"{storage_root_directory}/{data['employer_email']}/{data['job_id']}/{directory}/{data['file_name']}"
     try:
         if storage_manager.check_file_existence(file_path) is False:
-            content = base64.b64decode(data['content_as_string'])
-            link = storage_manager.upload_file(file_path, content, data['file_type'])
+            link = storage_manager.upload_file(file_path, file, data['file_type'])
             if link:
                 delivered_project_asset = DeliveredProjectAsset()
                 get_project(data['project_id'])

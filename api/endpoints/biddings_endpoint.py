@@ -1,5 +1,5 @@
 from flask import request
-from flask_restplus import Resource
+from flask_restx import Resource
 
 from api.controller.biddings_controller import *
 from api.restplus import api

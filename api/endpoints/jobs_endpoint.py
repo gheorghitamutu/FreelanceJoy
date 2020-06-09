@@ -1,10 +1,10 @@
 from flask import request
-from flask_restplus import Resource
-from api.restplus import api
-from api.controller.jobs_controller import *
-from api.utilities.serializers import job_input, job_output, message, bad_request, page_of_jobs, location
-from api.utilities.parsers import pagination_arguments
+from flask_restx import Resource
 
+from api.controller.jobs_controller import *
+from api.restplus import api
+from api.utilities.parsers import pagination_arguments
+from api.utilities.serializers import job_input, job_output, message, bad_request, page_of_jobs, location
 
 jobs_namespace = api.namespace('jobs', description='Operations related to jobs')
 
@@ -13,7 +13,7 @@ jobs_namespace = api.namespace('jobs', description='Operations related to jobs')
 class JobCollection(Resource):
 
     @api.expect(pagination_arguments)
-    @api.marshal_list_with(page_of_jobs)
+    @api.marshal_with(page_of_jobs)
     @api.response(200, 'Jobs successfully queried.')
     def get(self):
         """

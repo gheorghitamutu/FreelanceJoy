@@ -21,6 +21,8 @@ from api.endpoints.categories_endpoint import categories_namespace
 from api.endpoints.delivered_assets_endpoint import projects_assets_namespace
 from api.endpoints.jobs_endpoint import jobs_namespace
 from api.endpoints.projects_endpoint import projects_namespace
+from api.endpoints.marketplace_endpoint import marketplace_namespace
+from api.endpoints.product_assets_endpoint import assets_namespace
 from api.restplus import api
 from config import *
 
@@ -82,6 +84,8 @@ class App(Flask):
         api.add_namespace(biddings_namespace)
         api.add_namespace(projects_namespace)
         api.add_namespace(projects_assets_namespace)
+        api.add_namespace(marketplace_namespace)
+        api.add_namespace(assets_namespace)
         self.register_blueprint(blueprint)
 
         self.register_error_handler(500, self.server_error)

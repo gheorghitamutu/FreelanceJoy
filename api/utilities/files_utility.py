@@ -8,11 +8,11 @@ class GCloudStorage:
         self.storage_client = storage.Client()
         self.bucket = self.storage_client.get_bucket(self.bucket_name)
 
-    def upload_file(self, file_path, content, file_type):
+    def upload_file(self, file_path, file, file_type):
         self.logger.debug(f'Uploading file [{file_path}] to bucket [{self.bucket_name} ')
         try:
             blob = self.bucket.blob(file_path)
-            blob.upload_from_string(content, content_type=file_type)
+            blob.upload_from_file(file, content_type=file_type)
             blob.make_public()
             upload_url = f"https://storage.cloud.google.com/{self.bucket_name}/{file_path}"
             self.logger.debug(f'File [{file_path}] was uploaded successfully')
