@@ -26,7 +26,8 @@ def add_job(job_obj):
 def get_jobs(page, per_page, category_id, user_email, freelancer_flag):
     if category_id is not None:
         jobs_ids_with_project = [int(project.job_id) for project in Project.query.all()]
-        jobs = Job.query.join(Category).filter(Job.id.notin_(jobs_ids_with_project)).order_by(Job.created_at)
+        jobs = Job.query.filter(Job.id.notin_(jobs_ids_with_project),
+                                Job.category_id == category_id).order_by(Job.created_at)
         return jobs.paginate(page, per_page, error_out=False)
 
     if user_email is not None:
@@ -41,6 +42,7 @@ def get_jobs(page, per_page, category_id, user_email, freelancer_flag):
 
 def get_job(job_id):
     return check_job_existence(job_id)
+
 
 def delete_job(job_id):
     db.session.delete(check_job_existence(job_id))

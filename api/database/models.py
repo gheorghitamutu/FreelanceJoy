@@ -7,7 +7,7 @@ class Category(db.Model):
     __tablename__ = 'categories'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True)
+    name = db.Column(db.String(255), unique=True)
 
     # category = db.relationship('Job', backref=db.backref('categories', lazy='select'))
     def __init__(self, name):
@@ -22,8 +22,8 @@ class Job(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_email = db.Column(db.String)
-    title = db.Column(db.String, unique=True)
-    description = db.Column(db.String)
+    title = db.Column(db.String(255), unique=True)
+    description = db.Column(db.String(4000))
     payment = db.Column(db.Numeric(precision=5, scale=2))
     created_at = db.Column(db.TIMESTAMP)
 
@@ -105,8 +105,8 @@ class Project(db.Model):
 class Bidding(db.Model):
     __tablename__ = "biddings"
     id = db.Column(db.Integer, primary_key=True)
-    freelancer_email = db.Column(db.String)
-    message = db.Column(db.TEXT)
+    freelancer_email = db.Column(db.String(255))
+    message = db.Column(db.TEXT(4000))
     created_at = db.Column(db.TIMESTAMP)
     job_id = db.Column(db.Integer, db.ForeignKey('jobs.id'))
 

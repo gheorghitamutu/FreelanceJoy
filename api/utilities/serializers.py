@@ -30,7 +30,7 @@ generic_file_output = api.model('Generic File Output', {
     'created_at': fields.String(required=True)
 })
 
-attachment_output = api.model('Attachment Output', generic_file_output, {
+attachment_output = api.inherit('Attachment Output', generic_file_output, {
     'job_id': fields.Integer(required=True)
 })
 
@@ -73,7 +73,7 @@ job_input = api.model('Job Input', {
     'user_email': fields.String(required=True),
     'title': fields.String(required=True),
     'description': fields.String(required=True),
-    'payment': fields.Fixed(decimals=5, required=True),
+    'payment': fields.Float(required=True),
     'created_at': fields.DateTime(required=False),
     'category_id': fields.Integer(required=True)
 })
@@ -83,7 +83,7 @@ job_output = api.model('Job Ouput', {
     'user_email': fields.String(required=True),
     'title': fields.String(required=True),
     'description': fields.String(required=True),
-    'payment': fields.Fixed(decimals=5, required=True),
+    'payment': fields.Float(required=True),
     'created_at': fields.DateTime(required=True),
     # 'category': fields.Nested(category_output, required=True),
     'attachments': fields.List(fields.Nested(attachment_output)),
