@@ -172,8 +172,7 @@ def add_files(job_id=None, project_id=None, product_for_sale_id=None, user_email
                         file_info['job_id'] = job_id
                         file_info['user_email'] = user_email
                     # product asset
-                    elif product_for_sale_id is not None and file_type in ['.zip', '.rar', '.tar', '.png', '.jpg',
-                                                                           '.jpeg']:
+                    elif product_for_sale_id is not None and file_type in ['.zip', '.rar', '.tar', '.png', '.jpg', '.jpeg']:
                         uri = '/files/productAssets/'
                         if file_type not in ['.zip', '.rar', '.tar']:
                             file_info['asset_type'] = 'image'
