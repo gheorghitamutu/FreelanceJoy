@@ -115,7 +115,6 @@ marketplace_project_input = api.model('Marketplace Project Input', {
 marketplace_project_output = api.model('Marketplace Project Output', {
     'id': fields.Integer(required=True),
     'created_at': fields.DateTime(required=True),
-    'assets_archive_link': fields.String(required=True),
     'assets': fields.List(fields.Nested(product_asset_output), required=True),
     'user_email': fields.String(required=True),
     'partner_email': fields.String(required=False),

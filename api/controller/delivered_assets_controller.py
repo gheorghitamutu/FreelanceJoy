@@ -33,7 +33,7 @@ def add_delivered_project_asset(file, data):
                 get_project(data['project_id'])
                 get_job(data['job_id'])
 
-                del data['file_type'], data['user_email'], data['job_id']
+                del data['file_type'], data['employer_email'], data['job_id']
                 data['link'] = link
                 for key in data:
                     setattr(delivered_project_asset, key, data[key])

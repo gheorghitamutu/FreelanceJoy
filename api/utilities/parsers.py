@@ -19,13 +19,13 @@ upload_parser.add_argument('file', type=FileStorage, location='files',  required
 
 attachment_input = reqparse.RequestParser()
 attachment_input.add_argument('file_name', type=str, required=True)
-attachment_input.add_argument('file_type', type=str, choices=['.txt', '.zip', '.png', '.jpg', '.jpeg'], required=True)
+attachment_input.add_argument('file_type', type=str, choices=['.txt', '.zip', '.rar', '.png', '.jpg', '.jpeg'], required=True)
 attachment_input.add_argument('user_email', type=inputs.email(), required=True)
 attachment_input.add_argument('job_id', type=int, required=True)
 
 delivered_project_asset_input = reqparse.RequestParser()
 delivered_project_asset_input.add_argument('file_name', type=str, required=True)
-delivered_project_asset_input.add_argument('file_type', type=str, choices=['.txt', '.zip', '.png', '.jpg', '.jpeg'], required=True)
+delivered_project_asset_input.add_argument('file_type', type=str, choices=['.txt', '.rar', '.tar', '.zip', '.png', '.jpg', '.jpeg'], required=True)
 delivered_project_asset_input.add_argument('employer_email', type=inputs.email(), required=True)
 delivered_project_asset_input.add_argument('project_id', type=int, required=True)
 delivered_project_asset_input.add_argument('job_id', type=int, required=True)
