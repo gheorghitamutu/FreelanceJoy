@@ -67,7 +67,8 @@ project_input = api.model('Project Input', {
 })
 
 project_output = api.inherit('Project Output', project_input, {
-    'id': fields.Integer(required=True)
+    'id': fields.Integer(required=True),
+    'project_assets': fields.List(fields.Nested(delivered_project_asset_output))
 })
 
 job_input = api.model('Job Input', {
