@@ -74,6 +74,7 @@ class App(Flask):
 
         self.add_url_rule('/', view_func=self.landing, methods=['GET'])
         self.add_url_rule('/dashboard', view_func=self.dashboard, methods=['GET'])
+        self.add_url_rule('/my_projects', view_func=self.my_projects, methods=['GET'])
         self.add_url_rule('/logout', view_func=self.logout, methods=['GET'])
         self.add_url_rule('/login', view_func=self.login, methods=['GET'])
 
@@ -218,6 +219,11 @@ class App(Flask):
         }
 
         return render_template('dashboard.html', session=self.session, user_data=user_data)
+
+    @login_required
+    def my_projects(self):
+        project_list = self.get_user_project_list(request.url_root, self.session['claims']['email'])
+        return render_template('my_projects.html', session=self.session, project_list=project_list)
 
     @staticmethod
     def get_user_project_list(url_root, email):
