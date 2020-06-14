@@ -214,11 +214,15 @@ class App(Flask):
         bidding_list = self.get_user_bidding_list(request.url_root, self.session['claims']['email'])
         biddings_count = len(bidding_list)
 
+        jobs_list = self.get_user_job_list(request.url_root, self.session['claims']['email'])
+        jobs_count = len(jobs_list)
+
         user_data = {
             'projects_count': projects_count,
             'projects_past_deadline': projects_past_deadline_count,
             'projects_in_progress': projects_in_progress,
-            'biddings_count': biddings_count
+            'biddings_count': biddings_count,
+            'jobs_count': jobs_count
         }
 
         return render_template('dashboard.html', session=self.session, user_data=user_data)
