@@ -1,15 +1,16 @@
 import logging
 
-from api.database.models import Job, db, Category, Project
-
 from sqlalchemy.orm.exc import NoResultFound
+
+from api.database.models import Job, db, Project
 
 log = logging.getLogger(__name__)
 
 
 def check_job_existence(job_id):
     try:
-        return Job.query.filter(Job.id == job_id).one()
+        job = Job.query.filter(Job.id == job_id).one()
+        return job
     except NoResultFound as e:
         raise NoResultFound(f"Job with id {job_id} doesn't exist") from e
 
@@ -41,9 +42,11 @@ def get_jobs(page, per_page, category_id, user_email, freelancer_flag):
 
 
 def get_job(job_id):
-    return check_job_existence(job_id)
+    job = check_job_existence(job_id)
+    return job
 
 
 def delete_job(job_id):
-    db.session.delete(check_job_existence(job_id))
+    job = check_job_existence(job_id)
+    db.session.delete(job)
     db.session.commit()

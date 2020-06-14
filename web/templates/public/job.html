@@ -1,0 +1,76 @@
+{% extends "base_site.html" %}
+{% block title %} Blank Page {% endblock title %}
+{% block stylesheets %}
+<!-- Specific CSS goes HERE -->
+{% endblock %}
+{% block content %}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        Job #{{ job['id'] }}
+    </h1>
+    <ol class="breadcrumb">
+        <li><i class="fa fa-dashboard"></i>Job</li>
+    </ol>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="box box-info" style="padding:10px">
+        <div class="inner">
+            <h3> {{ job['title'] }}</h3>
+            <hr>
+        </div>
+        <div class="inner">
+            <p> {{ job['description'] }}</p>
+            <hr>
+        </div>
+        <div class="inner">
+            <p>Payment: {{ job['payment'] }}$</p>
+            <p>Created: {{ job['created_at'] }}</p>
+            <hr>
+        </div>
+        <div class="inner">
+            <p>Attachments #{{ job['attachments']|length }}</p>
+            <ol>
+                {% for attachment in job['attachments'] %}
+                <li><a href="{{ attachment['link'] }}">{{ attachment['file_name'] }}</a></li>
+                {% endfor %}
+            </ol>
+            <hr>
+        </div>
+        <div class="inner">
+            <p>Biddings #{{ job['biddings']|length }}</p>
+
+            {% for bidding in job['biddings'] %}
+            <p>Email: {{ bidding['freelancer_email'] }}</p>
+            <p>Created: {{ bidding['created_at'] }}</p>
+            <p>{{ bidding['message'] }}</p>
+            {% endfor %}
+
+            <hr>
+        </div>
+        <div class="inner">
+            <p>Projects #{{ job['project']|length }}</p>
+            {% for project in job['project'] %}
+            <p>Project #{{ loop.index }}</p>
+            <ol>
+                <li>Email: {{ project['freelancer_email'] }}</li>
+                <li>Created: {{ project['created_at'] }}</li>
+                <li>Deadline {{ project['deadline'] }}</li>
+            </ol>
+            {% endfor %}
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer clearfix">
+            <a class="btn btn-sm btn-danger btn-flat pull-right" href="/delete_job/{{ job['id'] }}">Delete Job</a>
+        </div>
+        <!-- /.box-footer -->
+    </div>
+</section>
+<!-- /.content -->
+
+{% endblock content %}
+{% block javascripts %}
+<!-- Specific JS goes HERE -->
+{% endblock %}

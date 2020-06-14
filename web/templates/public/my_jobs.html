@@ -1,0 +1,79 @@
+{% extends "base_site.html" %}
+
+{% block title %} Blank Page {% endblock title %}
+
+{% block stylesheets %}
+<!-- Specific CSS goes HERE -->
+{% endblock %}
+
+{% block content %}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        My jobs
+    </h1>
+    <ol class="breadcrumb">
+        <li><i class="fa fa-dashboard"></i>My Jobs</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="box box-info">
+        <div class="box-header with-border">
+            <h3 class="box-title">Jobs</h3>
+
+            <div class="box-tools pull-right">
+                <button class="btn btn-box-tool" data-widget="collapse" type="button"><i class="fa fa-minus"></i>
+                </button>
+                <button class="btn btn-box-tool" data-widget="remove" type="button"><i class="fa fa-times"></i></button>
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <div class="table-responsive">
+                <table class="table no-margin">
+                    <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Payment</th>
+                        <th>Created</th>
+                        <th>Attachments</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for job in job_list %}
+
+                    <tr>
+                        <td><a href="/see_job/{{ job['id'] }}">{{ job['title'] }}</a></td>
+                        <td>{{ job['description'] }}</td>
+                        <td>{{ job['created_at'] }}</td>
+                        <td>{{ job['payment'] }}$</td>
+                        <td>{{ job['attachments']|length }}</td>
+                    </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.table-responsive -->
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer clearfix">
+            <a class="btn btn-sm btn-info btn-flat pull-right" href="javascript:void(0)">Place New Job</a>
+        </div>
+        <!-- /.box-footer -->
+    </div>
+
+</section>
+<!-- /.content -->
+
+{% endblock content %}
+
+{% block javascripts %}
+<!-- Specific JS goes HERE -->
+{% endblock %}

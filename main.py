@@ -75,6 +75,9 @@ class App(Flask):
         self.add_url_rule('/', view_func=self.landing, methods=['GET'])
         self.add_url_rule('/dashboard', view_func=self.dashboard, methods=['GET'])
         self.add_url_rule('/my_projects', view_func=self.my_projects, methods=['GET'])
+        self.add_url_rule('/my_jobs', view_func=self.my_jobs, methods=['GET'])
+        self.add_url_rule('/see_job/<int:job_id>', view_func=self.see_job, methods=['GET'])
+        self.add_url_rule('/delete_job/<int:job_id>', view_func=self.delete_job, methods=['GET'])
         self.add_url_rule('/logout', view_func=self.logout, methods=['GET'])
         self.add_url_rule('/login', view_func=self.login, methods=['GET'])
 
@@ -224,6 +227,47 @@ class App(Flask):
     def my_projects(self):
         project_list = self.get_user_project_list(request.url_root, self.session['claims']['email'])
         return render_template('my_projects.html', session=self.session, project_list=project_list)
+
+    @login_required
+    def my_jobs(self):
+        job_list = self.get_user_job_list(request.url_root, self.session['claims']['email'])
+        return render_template('my_jobs.html', session=self.session, job_list=job_list)
+
+    def see_job(self, job_id):
+        job = self.get_job(request.url_root, job_id)
+
+        return render_template('job.html', session=self.session, job=job)
+
+    def delete_job(self, job_id):
+        self.delete_user_job(request.url_root, job_id)
+
+        return redirect(url_for('dashboard'))
+
+    @staticmethod
+    def delete_user_job(url_root, job_id):
+        api_url = '{}api/jobs/{}'.format(url_root, job_id)
+        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
+        r = requests.delete(api_url, verify=False)
+
+        return r
+
+    @staticmethod
+    def get_job(url_root, job_id):
+        api_url = '{}api/jobs/{}'.format(url_root, job_id)
+        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
+        r = requests.get(api_url, verify=False)
+        job = json.loads(r.text)
+
+        return job
+
+    @staticmethod
+    def get_user_job_list(url_root, email):
+        api_url = '{}api/jobs/?page=1&per_page=50&user_email={}&freelancer_flag=false'.format(url_root, email)
+        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
+        r = requests.get(api_url, verify=False)
+        job_list = json.loads(r.text)
+
+        return job_list['items']
 
     @staticmethod
     def get_user_project_list(url_root, email):
