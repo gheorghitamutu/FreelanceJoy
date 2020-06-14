@@ -78,6 +78,7 @@ class App(Flask):
         self.add_url_rule('/my_jobs', view_func=self.my_jobs, methods=['GET'])
         self.add_url_rule('/see_job/<int:job_id>', view_func=self.see_job, methods=['GET'])
         self.add_url_rule('/delete_job/<int:job_id>', view_func=self.delete_job, methods=['GET'])
+        self.add_url_rule('/add_job', view_func=self.add_job, methods=['GET', 'POST'])
         self.add_url_rule('/logout', view_func=self.logout, methods=['GET'])
         self.add_url_rule('/login', view_func=self.login, methods=['GET'])
 
@@ -245,7 +246,34 @@ class App(Flask):
     def delete_job(self, job_id):
         self.delete_user_job(request.url_root, job_id)
 
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('my_jobs'))
+
+    def add_job(self):
+        print(request.form)
+        if request.method == 'GET':
+            category_list = self.get_job_category_list(request.url_root)
+            return render_template('add_job.html', session=self.session, category_list=category_list)
+        elif request.method == 'POST':
+            self.add_user_job(request.url_root)
+            return redirect(url_for('my_jobs'))
+        else:
+            return redirect(url_for('my_jobs'))
+
+    def add_user_job(self, url_root):
+
+        payload = {
+            'user_email': self.session['claims']['email'],
+            'title': request.form['title'],
+            'description': request.form['description'],
+            'payment': request.form['payment'],
+            'created_at': datetime.datetime.utcnow().isoformat(),
+            'category_id': request.form['category_id'],
+        }
+
+        api_url = '{}api/jobs/'.format(url_root)
+        r = requests.post(api_url, json=payload, verify=False)
+
+        return r
 
     @staticmethod
     def delete_user_job(url_root, job_id):
@@ -272,6 +300,15 @@ class App(Flask):
         job_list = json.loads(r.text)
 
         return job_list['items']
+
+    @staticmethod
+    def get_job_category_list(url_root):
+        api_url = '{}api/categories'.format(url_root)
+        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
+        r = requests.get(api_url, verify=False)
+        categories_list = json.loads(r.text)
+
+        return categories_list
 
     @staticmethod
     def get_user_project_list(url_root, email):

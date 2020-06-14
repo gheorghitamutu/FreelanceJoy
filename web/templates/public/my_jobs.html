@@ -1,6 +1,6 @@
 {% extends "base_site.html" %}
 
-{% block title %} Blank Page {% endblock title %}
+{% block title %} Add Job {% endblock title %}
 
 {% block stylesheets %}
 <!-- Specific CSS goes HERE -->
@@ -64,7 +64,7 @@
         </div>
         <!-- /.box-body -->
         <div class="box-footer clearfix">
-            <a class="btn btn-sm btn-info btn-flat pull-right" href="javascript:void(0)">Place New Job</a>
+            <a class="btn btn-sm btn-info btn-flat pull-right" href="{{ url_for('add_job') }}">Place New Job</a>
         </div>
         <!-- /.box-footer -->
     </div>
