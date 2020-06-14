@@ -107,5 +107,5 @@ Sends application trace data to Cloud Trace for viewing.<br>
 The Token Service API lets you exchange an ID token or a refresh token for an access token and a refresh token,<br>
 which you can use to securely call your own APIs.<br>
 				
-## Endpoints API
-REST APIs, developer portal, metrics.
+## Our Endpoints/API
+REST APIs, [ Base URL: /api ] for UI or [ Base URL: /api/swagger.json] for JSON file.<br>

@@ -1,13 +1,12 @@
-import base64
 import logging
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
-from api.utilities.files_utility import GCloudStorage
-from api.controller.projects_controller import get_project
 from api.controller.jobs_controller import get_job
+from api.controller.projects_controller import get_project_by_id
 from api.database.models import DeliveredProjectAsset, db
+from api.utilities.files_utility import GCloudStorage
 from config import BUCKET_NAME
 
 log = logging.getLogger(__name__)
@@ -30,7 +29,7 @@ def add_delivered_project_asset(file, data):
             link = storage_manager.upload_file(file_path, file, data['file_type'])
             if link:
                 delivered_project_asset = DeliveredProjectAsset()
-                get_project(data['project_id'])
+                get_project_by_id(data['project_id'])
                 get_job(data['job_id'])
 
                 del data['file_type'], data['employer_email'], data['job_id']

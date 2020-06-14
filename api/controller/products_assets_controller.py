@@ -1,13 +1,11 @@
-import base64
 import logging
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
-from api.utilities.files_utility import GCloudStorage
-from api.controller.projects_controller import get_project
 from api.controller.marketplace_controller import get_marketplace_project
 from api.database.models import ProductAsset, db
+from api.utilities.files_utility import GCloudStorage
 from config import BUCKET_NAME
 
 log = logging.getLogger(__name__)

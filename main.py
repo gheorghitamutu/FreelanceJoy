@@ -1,4 +1,5 @@
 import datetime
+import json
 import logging
 import os
 from functools import wraps
@@ -6,6 +7,7 @@ from functools import wraps
 import firebase_admin
 import google.oauth2.credentials
 import google.oauth2.id_token
+import requests
 from firebase_admin import auth
 from flask import Flask, render_template, request, redirect, url_for, Blueprint
 from flask_caching import Cache
@@ -20,9 +22,9 @@ from api.endpoints.biddings_endpoint import biddings_namespace
 from api.endpoints.categories_endpoint import categories_namespace
 from api.endpoints.delivered_assets_endpoint import projects_assets_namespace
 from api.endpoints.jobs_endpoint import jobs_namespace
-from api.endpoints.projects_endpoint import projects_namespace
 from api.endpoints.marketplace_endpoint import marketplace_namespace
 from api.endpoints.product_assets_endpoint import assets_namespace
+from api.endpoints.projects_endpoint import projects_namespace
 from api.restplus import api
 from config import *
 
@@ -197,7 +199,43 @@ class App(Flask):
 
     @login_required
     def dashboard(self):
-        return render_template('dashboard.html', session=self.session)
+        project_list = self.get_user_project_list(request.url_root, self.session['claims']['email'])
+        projects_count = len(project_list)
+        projects_past_deadline_count = \
+            len(list(filter(
+                lambda p: datetime.datetime.strptime(p['deadline'], '%Y-%m-%dT%H:%M:%S') < datetime.datetime.now(),
+                project_list)))
+        projects_in_progress = projects_count
+
+        bidding_list = self.get_user_bidding_list(request.url_root, self.session['claims']['email'])
+        biddings_count = len(bidding_list)
+
+        user_data = {
+            'projects_count': projects_count,
+            'projects_past_deadline': projects_past_deadline_count,
+            'projects_in_progress': projects_in_progress,
+            'biddings_count': biddings_count
+        }
+
+        return render_template('dashboard.html', session=self.session, user_data=user_data)
+
+    @staticmethod
+    def get_user_project_list(url_root, email):
+        api_url = '{}api/projects/{}'.format(url_root, email)
+        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
+        r = requests.get(api_url, verify=False)
+        project_list = json.loads(r.text)
+
+        return project_list
+
+    @staticmethod
+    def get_user_bidding_list(url_root, email):
+        api_url = '{}api/biddings/{}'.format(url_root, email)
+        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
+        r = requests.get(api_url, verify=False)
+        bidding_list = json.loads(r.text)
+
+        return bidding_list
 
     @staticmethod
     def unauthorized_handler():

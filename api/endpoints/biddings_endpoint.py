@@ -25,6 +25,18 @@ class BiddingCollection(Resource):
         return {"location": f"{api.base_url}biddings/{id}"}, 201
 
 
+@api.response(404, 'Biddings not found', message)
+@biddings_namespace.route('/<string:email>')
+class ProjectCollection(Resource):
+    @api.marshal_list_with(bidding_output)
+    @api.response(200, 'Projects successfully queried.')
+    def get(self, email):
+        """
+        Returns all biddings under email specified.
+        """
+        return get_biddings_by_email(email)
+
+
 @api.response(404, 'Bidding not found', message)
 @biddings_namespace.route('/<int:id>')
 class BiddingItem(Resource):

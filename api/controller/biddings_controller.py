@@ -21,6 +21,13 @@ def get_bidding(bidding_id):
         raise NoResultFound(f"Bidding with id {bidding_id} doesn't exist") from e
 
 
+def get_biddings_by_email(freelancer_email):
+    try:
+        return Bidding.query.filter(Bidding.freelancer_email == freelancer_email).all()
+    except NoResultFound as e:
+        raise NoResultFound(f"Biddings for freelancer email {freelancer_email} don't exist") from e
+
+
 def delete_bidding(bidding_id):
     bidding = get_bidding(bidding_id)
     db.session.delete(bidding)

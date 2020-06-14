@@ -1,4 +1,5 @@
 from flask_restx import fields
+
 from api.restplus import api
 
 location = api.model('Resource Location', {
@@ -65,7 +66,7 @@ project_input = api.model('Project Input', {
 
 })
 
-project_output = api.inherit('Project Ouput', project_input, {
+project_output = api.inherit('Project Output', project_input, {
     'id': fields.Integer(required=True)
 })
 

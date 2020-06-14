@@ -12,7 +12,7 @@
 <section class="content-header">
     <h1>
         Dashboard
-        <small> - get your latest stats</small>
+        <small> - your latest stats</small>
     </h1>
     <ol class="breadcrumb">
         <li><i class="fa fa-dashboard"></i>Dashboard</li>
@@ -22,30 +22,68 @@
 <!-- Main content -->
 <section class="content">
 
-    <!-- Default box -->
-    <div class="box">
-        <div class="box-header with-border">
-            <h3 class="box-title">Here's what happened</h3>
+    <div class="row">
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3>{{ user_data['projects_count'] }}</h3>
 
-            <div class="box-tools pull-right">
-                <button class="btn btn-box-tool" data-toggle="tooltip" data-widget="collapse" title="Collapse"
-                        type="button">
-                    <i class="fa fa-minus"></i></button>
-                <button class="btn btn-box-tool" data-toggle="tooltip" data-widget="remove" title="Remove"
-                        type="button">
-                    <i class="fa fa-times"></i></button>
+                    <p>My projects</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-stats-bars"></i>
+                </div>
+                <a class="small-box-footer" href="#">More info <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
-        <div class="box-body">
-            Here should be dashboard content!
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-red">
+                <div class="inner">
+                    <h3>{{ user_data['projects_past_deadline'] }}</h3>
+
+                    <p>Projects Past Deadline</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-stats-bars"></i>
+                </div>
+                <a class="small-box-footer" href="#">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
         </div>
-        <!-- /.box-body -->
-        <div class="box-footer">
-            Here should be a footer!
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-yellow">
+                <div class="inner">
+                    <h3>{{ user_data['projects_in_progress'] }}</h3>
+
+                    <p>Projects In Progress</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-pie-graph"></i>
+                </div>
+                <a class="small-box-footer" href="#">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
         </div>
-        <!-- /.box-footer-->
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+            <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3>{{ user_data['biddings_count'] }}</h3>
+
+                    <p>Bidding Count</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-person-add"></i>
+                </div>
+                <a class="small-box-footer" href="#">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
     </div>
-    <!-- /.box -->
 
 </section>
 <!-- /.content -->

@@ -25,6 +25,18 @@ class ProjectCollection(Resource):
         return {"location": f"{api.base_url}projects/{id}"}, 201
 
 
+@api.response(404, 'Projects not found', message)
+@projects_namespace.route('/<string:email>')
+class ProjectCollection(Resource):
+    @api.marshal_list_with(project_output)
+    @api.response(200, 'Projects successfully queried.')
+    def get(self, email):
+        """
+        Returns all projects under email specified.
+        """
+        return get_projects_by_email(email)
+
+
 @api.response(404, 'Project not found', message)
 @projects_namespace.route('/<int:id>')
 class ProjectItem(Resource):
@@ -35,7 +47,7 @@ class ProjectItem(Resource):
         """
         Return a single project
         """
-        return get_project(id)
+        return get_project_by_id(id)
 
     @api.response(200, 'Project successfully deleted.', message)
     def delete(self, id):
