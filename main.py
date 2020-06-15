@@ -333,7 +333,7 @@ class App(Flask):
         url_root = request.url_root
         categories_list = self.get_categories(url_root)
         page = request.args.get('page', 1, type=int)
-        per_page = request.args.get('per_page', 10, type=int)
+        per_page = request.args.get('per_page', 20, type=int)
         category_id = request.args.get('category_id', categories_list[0]['id'], type=int)
         product_list = self.get_products_by_category(url_root, page, per_page, category_id)
         data = dict()
