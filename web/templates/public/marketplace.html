@@ -1,0 +1,80 @@
+{% extends "base_site.html" %}
+
+{% block title %} Blank Page {% endblock title %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            Products
+        </h1>
+        <ol class="breadcrumb">
+            <li><i class="fa fa-dashboard"></i></li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        {% for page_num in range(products['pages']) %}
+            {% if page_num %}
+                {% if products['page'] == page_num %}
+                    <a class="btn btn-info mb-4"
+                       href="{{ url_for('marketplace', page=page_num, per_page=10) }}">{{ page_num }}</a>
+                {% else %}
+                    <a class="btn btn-outline-info mb-4"
+                       href="{{ url_for('marketplace', page=page_num, per_page=10) }}">{{ page_num }}</a>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+
+
+
+        <div class="d-flex flex-row bd-highlight mb-3">
+            {% for product in products['items'] %}
+                {% set img_link = [] %}
+                {% for asset in product['assets'] %}
+                    {% if asset['asset_type'] == "image" %}
+                        {% if img_link.append(asset['link']) %} {% endif %}
+                    {% endif %}
+                {% endfor %}
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+                            <div class="card">
+                                <img class="card-img img-thumbnail"
+                                     src="{{ img_link[0] }}"
+                                     alt="Vans">
+                                <div class="card-body">
+                                    <h4 class="card-title">{{ product['name'] }}</h4>
+                                    <p class="card-text">
+                                        {{ product['description'] }}
+                                    </p>
+
+                                    <div class="buy d-flex justify-content-between align-items-center">
+                                        <div class="price text-success"><h5 class="mt-4">${{product['price']}}</h5></div>
+                                        <a href="#" class="btn btn-danger mt-3"><i class="fa fa-shopping-cart"></i> Add
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+    </section>
+    <!-- /.content -->
+
+{% endblock content %}
+
+{% block javascripts %}
+    <!-- Specific JS goes HERE -->
+{% endblock %}
