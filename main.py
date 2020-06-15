@@ -85,6 +85,7 @@ class App(Flask):
         self.add_url_rule('/see_job/<int:job_id>', view_func=self.see_job, methods=['GET'])
         self.add_url_rule('/delete_job/<int:job_id>', view_func=self.delete_job, methods=['GET'])
         self.add_url_rule('/add_job', view_func=self.add_job, methods=['GET', 'POST'])
+        self.add_url_rule('/marketplace', view_func=self.marketplace, methods=['GET'])
         self.add_url_rule('/logout', view_func=self.logout, methods=['GET'])
         self.add_url_rule('/login', view_func=self.login, methods=['GET'])
 
@@ -373,6 +374,17 @@ class App(Flask):
 
         return r
 
+    def marketplace(self):
+        url_root = request.url_root
+        categories_list = self.get_categories(url_root)
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 20, type=int)
+        category_id = request.args.get('category_id', categories_list[0]['id'], type=int)
+        product_list = self.get_products_by_category(url_root, page, per_page, category_id)
+        data = dict()
+
+        return render_template('marketplace.html', session=self.session, products=product_list, categories=categories_list, current_category=category_id )
+
     @staticmethod
     def delete_user_job(url_root, job_id):
         api_url = '{}api/jobs/{}'.format(url_root, job_id)
@@ -425,6 +437,19 @@ class App(Flask):
         bidding_list = json.loads(r.text)
 
         return bidding_list
+
+
+    @staticmethod
+    def get_categories(url_root):
+        api_url = '{}api/categories'.format(url_root)
+        r = requests.get(api_url, verify=False)
+
+        return json.loads(r.text)
+
+    @staticmethod
+    def get_products_by_category(url_root, page, per_page, category_id):
+        api_url = '{}api/marketplace/?page={}&per_page={}&category_id={}'.format(url_root, page, per_page, category_id)
+        return json.loads(requests.get(api_url, verify=False).text)
 
     @staticmethod
     def unauthorized_handler():
