@@ -36,7 +36,7 @@ def get_marketplace_projects(page, per_page, category_id, user_email, freelancer
 
     if user_email is not None:
         if freelancer_flag is True:
-            marketplace_projects = MarketplaceProject.query.filter(Project.partnet_email == user_email)
+            marketplace_projects = MarketplaceProject.query.filter(Project.partner_email == user_email)
             return marketplace_projects.paginate(page, per_page, error_out=False)
         else:
             return MarketplaceProject.query.filter(MarketplaceProject.user_email == user_email).paginate(page, per_page,

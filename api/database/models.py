@@ -66,24 +66,6 @@ class Attachment(db.Model):
         return "Attachment {}".format(self.name)
 
 
-class DeliveredProjectAsset(db.Model):
-    __tablename__ = "projects_delivered_assets"
-    id = db.Column(db.Integer, primary_key=True)
-    link = db.Column(db.String)
-    file_name = db.Column(db.String)
-    created_at = db.Column(db.TIMESTAMP)
-    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'))
-    message = db.Column(db.String)
-
-    def __init__(self, link=None, file_name=None, created_at=None):
-        self.link = link
-        self.file_name = file_name
-        self.created_at = created_at
-
-    def __repr__(self):
-        return "Delivered project asset {}".format(self.name)
-
-
 class Project(db.Model):
     __tablename__ = "projects"
     id = db.Column(db.Integer, primary_key=True)
@@ -100,6 +82,24 @@ class Project(db.Model):
 
     def __repr__(self):
         return "Project {}".format(self.id)
+
+
+class DeliveredProjectAsset(db.Model):
+    __tablename__ = "projects_delivered_assets"
+    id = db.Column(db.Integer, primary_key=True)
+    link = db.Column(db.String)
+    file_name = db.Column(db.String)
+    created_at = db.Column(db.TIMESTAMP)
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'))
+    message = db.Column(db.String)
+
+    def __init__(self, link=None, file_name=None, created_at=None):
+        self.link = link
+        self.file_name = file_name
+        self.created_at = created_at
+
+    def __repr__(self):
+        return "Delivered project asset {}".format(self.name)
 
 
 class Bidding(db.Model):

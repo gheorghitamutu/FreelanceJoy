@@ -33,7 +33,8 @@
 
 
 
-        <div class="productList" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-content:space-between;">
+        <div class="productList"
+             style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-content:space-between;">
             {% for product in products['items'] %}
                 {% set img_link = [] %}
                 {% for asset in product['assets'] %}
@@ -42,23 +43,23 @@
                     {% endif %}
                 {% endfor %}
 
-                            <div class="card" style="width: 18rem; margin: 10px">
-                                <img class="card-img img-thumbnail"
-                                     src="{{ img_link[0] }}"
-                                     alt="Vans">
-                                <div class="card-body">
-                                    <h4 class="card-title">{{ product['name'][:20] }}</h4>
-                                    <p class="card-text">
-                                        {{ product['description'][:100] }}
-                                    </p>
+                <div class="card" style="width: 18rem; margin: 10px">
+                    <img class="card-img img-thumbnail"
+                         src="{{ img_link[0] }}"
+                         alt="Vans">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ product['name'][:20] }}</h4>
+                        <p class="card-text">
+                            {{ product['description'][:100] }}
+                        </p>
 
-                                    <div class="buy" style="display: flex; flex-direction: row; justify-content:space-between;">
-                                        <div class="price text-success"><h5 class="mt-4">${{product['price']}}</h5></div>
-                                        <a href="#" class="btn btn-danger mt-3"><i class="fa fa-shopping-cart"></i> Add
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="buy" style="display: flex; flex-direction: row; justify-content:space-between;">
+                            <div class="price text-success"><h5 class="mt-4">${{ product['price'] }}</h5></div>
+                            <a href="#" class="btn btn-danger mt-3"><i class="fa fa-shopping-cart"></i> Add
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
 
 

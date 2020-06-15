@@ -1,11 +1,12 @@
 from flask import request
 from flask_restx import Resource
-
+import logging
 from api.controller.projects_controller import *
 from api.restplus import api
 from api.utilities.serializers import project_input, project_output, message, bad_request, location
 
 projects_namespace = api.namespace('projects', description='Operations related to projects')
+log = logging.getLogger(__name__)
 
 
 @projects_namespace.route('/')
@@ -47,7 +48,8 @@ class ProjectItem(Resource):
         """
         Return a single project
         """
-        return get_project_by_id(id)
+        result = get_project_by_id(id)
+        return result
 
     @api.response(200, 'Project successfully deleted.', message)
     def delete(self, id):
