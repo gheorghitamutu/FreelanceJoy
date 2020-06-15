@@ -1,0 +1,68 @@
+{% extends "base_site.html" %}
+{% block title %} Add Job {% endblock title %}
+{% block stylesheets %}
+<!-- Specific CSS goes HERE -->
+{% endblock %}
+{% block content %}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        Add project
+    </h1>
+    <ol class="breadcrumb">
+        <li><i class="fa fa-dashboard"></i>Add Project</li>
+    </ol>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="box box-info">
+        <div class="box-header with-border">
+            <h3 class="box-title">Add Project Form</h3>
+        </div>
+        <!-- /.box-header -->
+        <!-- form start -->
+        <form class="form-horizontal" method="POST">
+            <div class="box-body">
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="job_id">Job</label>
+
+                    <div class="col-sm-10">
+                        <select class="form-control" id="job_id" name="job_id">
+                            {% for job in job_list %}
+                            <option value="{{ job['id'] }}"> {{ job['title'] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="deadline">Deadline</label>
+
+                    <div class="col-sm-10">
+                        <div class="input-group date" data-provide="datepicker">
+                            <input class="form-control" id="deadline" name="deadline" type="text">
+                            <div class="input-group-addon">
+                                <span class="glyphicon glyphicon-th"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <button class="btn btn-default" onclick="window.location='{{ url_for('my_projects') }}';return false;"
+                        type="cancel">Cancel
+                </button>
+                <button class="btn btn-info pull-right" type="submit" value="submit">Add Project</button>
+            </div>
+            <!-- /.box-footer -->
+        </form>
+    </div>
+</section>
+<!-- /.content -->
+{% endblock content %}
+{% block javascripts %}
+<!-- Specific JS goes HERE -->
+{% endblock %}

@@ -23,3 +23,4 @@
 <https://startbootstrap.com/themes/creative/><br>
 <https://github.com/ColorlibHQ/AdminLTE><br>
 <https://flask-restplus.readthedocs.io/en/stable/example.html><br>
+<https://stackoverflow.com/questions/10201648/sqlalchemy-wont-accept-datetime-datetime-now-value-in-a-datetime-column><br>

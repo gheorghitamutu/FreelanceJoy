@@ -22,32 +22,55 @@
 <!-- Main content -->
 <section class="content">
 
-    <div class="row">
+    <div class="box box-info">
+        <div class="box-header with-border">
+            <h3 class="box-title">Jobs</h3>
 
-        {% for project in project_list %}
-
-        <div class="col-lg-3 col-xs-6">
-            <!-- small box -->
-            <div class="small-box bg-aqua">
-                <div class="inner">
-                    <h3>Project #{{ loop.index }}</h3>
-
-                    <p>ID: {{ project['id'] }}</p>
-                    <p>Deadline: {{ project['deadline'] }}</p>
-                    <p>Freelancer Email: {{ project['freelancer_email'] }}</p>
-                    <p>Created At: {{ project['created_at'] }}</p>
-                    <p>Job ID: {{ project['job_id'] }}</p>
-
-                </div>
-                <div class="icon">
-                    <i class="ion ion-stats-bars"></i>
-                </div>
-                <a class="small-box-footer" href="#">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <div class="box-tools pull-right">
+                <button class="btn btn-box-tool" data-widget="collapse" type="button"><i class="fa fa-minus"></i>
+                </button>
+                <button class="btn btn-box-tool" data-widget="remove" type="button"><i class="fa fa-times"></i></button>
             </div>
         </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <div class="table-responsive">
+                <table class="table no-margin">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>ID</th>
+                        <th>Deadline</th>
+                        <th>Freelancer Email</th>
+                        <th>Created</th>
+                        <th>Job ID</th>
+                    </tr>
+                    </thead>
+                    <tbody>
 
-        {% endfor %}
+                    {% for project in project_list %}
 
+                    <tr>
+                        <td><a href="/see_project/{{ project['id'] }}">Project #{{ loop.index }}</a></td>
+                        <td>{{ project['id'] }}</td>
+                        <td>{{ project['deadline'] }}</td>
+                        <td>{{ project['freelancer_email'] }}</td>
+                        <td>{{ project['created_at'] }}$</td>
+                        <td>{{ project['job_id'] }}</td>
+                    </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.table-responsive -->
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer clearfix">
+            <a class="btn btn-sm btn-info btn-flat pull-right" href="{{ url_for('add_project') }}">Place New Project</a>
+        </div>
+        <!-- /.box-footer -->
     </div>
 
 </section>

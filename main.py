@@ -75,6 +75,9 @@ class App(Flask):
         self.add_url_rule('/', view_func=self.landing, methods=['GET'])
         self.add_url_rule('/dashboard', view_func=self.dashboard, methods=['GET'])
         self.add_url_rule('/my_projects', view_func=self.my_projects, methods=['GET'])
+        self.add_url_rule('/add_project', view_func=self.add_project, methods=['GET', 'POST'])
+        self.add_url_rule('/see_project/<int:project_id>', view_func=self.see_project, methods=['GET'])
+        self.add_url_rule('/delete_project/<int:project_id>', view_func=self.delete_project, methods=['GET'])
         self.add_url_rule('/my_jobs', view_func=self.my_jobs, methods=['GET'])
         self.add_url_rule('/see_job/<int:job_id>', view_func=self.see_job, methods=['GET'])
         self.add_url_rule('/delete_job/<int:job_id>', view_func=self.delete_job, methods=['GET'])
@@ -233,6 +236,57 @@ class App(Flask):
         project_list = self.get_user_project_list(request.url_root, self.session['claims']['email'])
         return render_template('my_projects.html', session=self.session, project_list=project_list)
 
+    def add_project(self):
+        if request.method == 'GET':
+            job_list = self.get_user_job_list(request.url_root, self.session['claims']['email'])
+            return render_template('add_project.html', session=self.session, job_list=job_list)
+        elif request.method == 'POST':
+            self.add_user_project(request.url_root)
+            return redirect(url_for('my_projects'))
+        else:
+            return redirect(url_for('my_projects'))
+
+    def see_project(self, project_id):
+        project = self.get_project(request.url_root, project_id)
+
+        return render_template('project.html', session=self.session, project=project)
+
+    def delete_project(self, project_id):
+        self.delete_user_project(request.url_root, project_id)
+
+        return redirect(url_for('my_projects'))
+
+    @staticmethod
+    def delete_user_project(url_root, job_id):
+        api_url = '{}api/projects/{}'.format(url_root, job_id)
+        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
+        r = requests.delete(api_url, verify=False)
+
+        return r
+
+    @staticmethod
+    def get_project(url_root, project_id):
+        api_url = '{}api/projects/{}'.format(url_root, project_id)
+        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
+        r = requests.get(api_url, verify=False)
+        project = json.loads(r.text)
+
+        return project
+
+    def add_user_project(self, url_root):
+
+        payload = {
+            'deadline': datetime.datetime.strptime(request.form['deadline'], '%m/%d/%Y').isoformat(),
+            'freelancer_email': self.session['claims']['email'],
+            'job_id': request.form['job_id'],
+            'created_at': datetime.datetime.utcnow().isoformat()
+        }
+
+        api_url = '{}api/projects/'.format(url_root)
+        r = requests.post(api_url, json=payload, verify=False)
+
+        return r
+
     @login_required
     def my_jobs(self):
         job_list = self.get_user_job_list(request.url_root, self.session['claims']['email'])
@@ -249,7 +303,6 @@ class App(Flask):
         return redirect(url_for('my_jobs'))
 
     def add_job(self):
-        print(request.form)
         if request.method == 'GET':
             category_list = self.get_job_category_list(request.url_root)
             return render_template('add_job.html', session=self.session, category_list=category_list)

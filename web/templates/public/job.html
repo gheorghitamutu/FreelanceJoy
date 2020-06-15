@@ -54,11 +54,11 @@
             <p>Projects #{{ job['project']|length }}</p>
             {% for project in job['project'] %}
             <p>Project #{{ loop.index }}</p>
-            <ol>
+            <ul>
                 <li>Email: {{ project['freelancer_email'] }}</li>
                 <li>Created: {{ project['created_at'] }}</li>
                 <li>Deadline {{ project['deadline'] }}</li>
-            </ol>
+            </ul>
             {% endfor %}
         </div>
         <!-- /.box-body -->

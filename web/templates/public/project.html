@@ -1,0 +1,44 @@
+{% extends "base_site.html" %}
+{% block title %} Job {% endblock title %}
+{% block stylesheets %}
+<!-- Specific CSS goes HERE -->
+{% endblock %}
+{% block content %}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        Project ID #{{ project['id'] }}
+    </h1>
+    <ol class="breadcrumb">
+        <li><i class="fa fa-dashboard"></i>Project</li>
+    </ol>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="box box-info" style="padding:10px">
+        <div class="inner">
+            <h3> #{{ project['id'] }}</h3>
+            <hr>
+        </div>
+        <div class="inner">
+            <p>Deadline: {{ project['deadline'] }}</p>
+            <p>Email: {{ project['freelancer_email'] }}</p>
+            <p>Job ID: {{ project['job_id'] }}</p>
+            <p>Created: {{ project['created_at'] }}</p>
+        </div>
+
+        <!-- /.box-body -->
+        <div class="box-footer clearfix">
+            <a class="btn btn-sm btn-danger btn-flat pull-right" href="/delete_project/{{ project['id'] }}">Delete
+                Project</a>
+        </div>
+        <!-- /.box-footer -->
+    </div>
+</section>
+<!-- /.content -->
+
+{% endblock content %}
+{% block javascripts %}
+<!-- Specific JS goes HERE -->
+{% endblock %}
