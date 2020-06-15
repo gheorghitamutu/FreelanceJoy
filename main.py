@@ -397,13 +397,14 @@ class App(Flask):
         url_root = request.url_root
         categories_list = self.get_categories(url_root)
         page = request.args.get('page', 1, type=int)
-        per_page = request.args.get('per_page', 20, type=int)
+        per_page = request.args.get('per_page', 10, type=int)
         category_id = request.args.get('category_id', categories_list[0]['id'], type=int)
+        category_name= request.args.get('category_name', categories_list[0]['name'], type=int)
         product_list = self.get_products_by_category(url_root, page, per_page, category_id)
 
 
         return render_template('marketplace.html', session=self.session, products=product_list,
-                               categories=categories_list, current_category=category_id)
+                               categories=categories_list, current_category_id=category_id, current_category_name=category_name)
 
     def product(self, product_id):
         url_root = request.url_root

@@ -7,34 +7,49 @@
 
 {% block content %}
 
-<!-- Content Header (Page header) -->
-<section class="content-header">
-    <h1>
-        Products
-    </h1>
-    <ol class="breadcrumb">
-        <li><i class="fa fa-dashboard"></i></li>
-    </ol>
-</section>
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
 
-<!-- Main content -->
-<section class="container-fluid">
-    {% for page_num in range(products['pages']) %}
-    {% if page_num %}
+        <h1>Current product category: {{current_category_name}}</h1>
+        <ol class="breadcrumb">
+            <li><i class="fa fa-dashboard"></i></li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" >
+        <div style="display: flex; flex-direction: row; justify-content: flex-start">
+        {% for page_num in range(products['pages'] + 1) %}
+            {% if page_num %}
                 {% if products['page'] == page_num %}
                     <a class="btn btn-info mb-4"
-                       href="{{ url_for('marketplace', page=page_num, per_page=20) }}">{{ page_num }}</a>
+                       href="{{ url_for('marketplace', page=page_num, per_page=10, category_id=current_category_id, category_name=current_category_name) }}">{{ page_num }}</a>
                 {% else %}
                     <a class="btn btn-outline-info mb-4"
-                       href="{{ url_for('marketplace', page=page_num, per_page=20) }}">{{ page_num }}</a>
+                       href="{{ url_for('marketplace', page=page_num, per_page=10, category_id=current_category_id, category_name=current_category_name) }}">{{ page_num }}</a>
                 {% endif %}
             {% endif %}
         {% endfor %}
 
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Categories
+                <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+               {% for category in categories %}
+                   <li>
+                       <a class="dropdown-item" href="{{ url_for('marketplace', page=page_num, per_page=20, category_id=category['id'], category_name=category['name']) }}">
+                           {{ category['name'] }}
+                       </a>
+                   </li>
+                {% endfor %}
+            </ul>
+        </div>
+        </div>
+
 
 
         <div class="productList"
-             style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-content:space-between;">
+             style="display: flex; flex-direction: row; flex-wrap: wrap;">
             {% for product in products['items'] %}
                 {% set img_link = [] %}
                 {% for asset in product['assets'] %}
@@ -60,8 +75,9 @@
                         </p>
 
                         <div class="buy" style="display: flex; flex-direction: row; justify-content:space-between;">
-                            <div class="price text-success"><h5 class="mt-4">${{ product['price'] }}</h5></div>
-                            <a href="/product/{{ product['id'] }}" class="btn btn-danger mt-3"><i class="fa fa-shopping-cart"></i> View
+                            <div class="price text-success"><h5 class="mt-1">${{ product['price'] }}</h5></div>
+                            <a href="/product/{{ product['id'] }}" class="btn btn-danger mt-3"><i
+                                    class="fa fa-shopping-cart"></i> View
                             </a>
                         </div>
                     </div>

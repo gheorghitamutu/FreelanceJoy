@@ -31,7 +31,7 @@ def add_marketplace_project(marketplace_project_obj):
 
 def get_marketplace_projects(page, per_page, category_id, user_email, freelancer_flag):
     if category_id is not None:
-        marketplace_projects = MarketplaceProject.query.join(Category).order_by(MarketplaceProject.created_at)
+        marketplace_projects = MarketplaceProject.query.join(Category).filter(Category.id == category_id).order_by(MarketplaceProject.created_at)
         return marketplace_projects.paginate(page, per_page, error_out=False)
 
     if user_email is not None:
