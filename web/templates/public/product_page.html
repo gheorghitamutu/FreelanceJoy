@@ -1,0 +1,71 @@
+{% extends "base_site.html" %}
+
+{% block title %} Product {% endblock title %}
+{% block stylesheets %}
+    <!-- Specific CSS goes HERE -->
+{% endblock %}
+{% block content %}
+
+
+    {% set img_link = [] %}
+    {% set archives = [] %}
+    {% for asset in product['assets'] %}
+        {% if asset['asset_type'] == "image" %}
+            {% if img_link.append(asset['link']) %}
+            {% endif %}
+        {% else %}
+            {% if archives.append(asset) %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            Product Name: {{ product['name'] }}
+        </h1>
+
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <div class="box box-info">
+            <div class="inner" style="padding:10px; display: flex;  flex-wrap: wrap; justify-content:center">
+                {% for image in img_link %}
+                    <img src="{{ image }}">
+                {% endfor %}
+            </div>
+            <div class="inner">
+                <h3>Details</h3>
+                <hr>
+            </div>
+            <div class="inner" style="font-size:20px">
+                <p>{{ product['description'] }}</p>
+                <p style="color:#2D5FDC">Price: ${{ product['price'] }}</p>
+
+            </div>
+            <div style="display:flex; flex-direction: row; justify-content: center;  align-items: center">
+                <button onclick="showAssets({{ archives }})" class="btn btn-danger mt-3">
+                    Buy
+                </button>
+                <div id="assets" style="font-size: 25px; display: flex; justify-content: center; flex-direction: column;"></div>
+            </div>
+
+        </div>
+    </section>
+    <!-- /.content -->
+
+{% endblock content %}
+{% block javascripts %}
+    <script>
+        function showAssets(archives) {
+            let html = '';
+            let element = document.getElementById("assets");
+            let archive;
+            for (archive of archives) {
+                html += `<a href="${archive['link']}">${archive['file_name']}</a>`
+            }
+            element.innerHTML = html;
+        }
+    </script>
+
+
+{% endblock %}
