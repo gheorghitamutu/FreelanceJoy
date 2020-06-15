@@ -220,6 +220,7 @@
         <!-- User Account: style can be found in dropdown.less -->
         <li class="dropdown user user-menu">
           <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            <i class="fa"></i>
             <img alt="User Image" class="user-image" src="{{ session['claims']['picture'] }}">
             <span class="hidden-xs">
                 <!-- current_user.username -->
@@ -252,18 +253,16 @@
             <!-- Menu Footer-->
             <li class="user-footer">
               <div class="pull-left">
-                <a class="btn btn-default btn-flat" href="/page-profile">Profile</a>
+                <a class="btn btn-default btn-flat" href="{{ url_for('profile') }}">Profile</a>
               </div>
               <div class="pull-right">
                 <a class="btn btn-default btn-flat" href="#" id="sign-out">Sign out</a>
               </div>
             </li>
+
           </ul>
         </li>
-        <!-- Control Sidebar Toggle Button -->
-        <li>
-          <a data-toggle="control-sidebar" href="#"><i class="fa fa-gears"></i></a>
-        </li>
+
       </ul>
     </div>
   </nav>

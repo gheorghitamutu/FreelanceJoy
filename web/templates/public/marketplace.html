@@ -1,26 +1,26 @@
 {% extends "base_site.html" %}
 
-{% block title %} Blank Page {% endblock title %}
+{% block title %} Marketplace {% endblock title %}
 
 {% block stylesheets %}
 {% endblock %}
 
 {% block content %}
 
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <h1>
-            Products
-        </h1>
-        <ol class="breadcrumb">
-            <li><i class="fa fa-dashboard"></i></li>
-        </ol>
-    </section>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        Products
+    </h1>
+    <ol class="breadcrumb">
+        <li><i class="fa fa-dashboard"></i></li>
+    </ol>
+</section>
 
-    <!-- Main content -->
-    <section class="container-fluid">
-        {% for page_num in range(products['pages']) %}
-            {% if page_num %}
+<!-- Main content -->
+<section class="container-fluid">
+    {% for page_num in range(products['pages']) %}
+    {% if page_num %}
                 {% if products['page'] == page_num %}
                     <a class="btn btn-info mb-4"
                        href="{{ url_for('marketplace', page=page_num, per_page=20) }}">{{ page_num }}</a>

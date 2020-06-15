@@ -73,6 +73,7 @@ class App(Flask):
         self.flask_sitemap.register_generator(self.root_sitemap)
 
         self.add_url_rule('/', view_func=self.landing, methods=['GET'])
+        self.add_url_rule('/profile', view_func=self.profile, methods=['GET'])
         self.add_url_rule('/dashboard', view_func=self.dashboard, methods=['GET'])
         self.add_url_rule('/categories', view_func=self.categories, methods=['GET', 'POST'])
         self.add_url_rule('/add_category', view_func=self.add_category, methods=['GET', 'POST'])
@@ -208,6 +209,23 @@ class App(Flask):
         auth.revoke_refresh_tokens(self.session['current_user']['uid'])
         self.session = dict()
         return redirect(url_for('login'))
+
+    @login_required
+    def profile(self):
+        project_list = self.get_user_project_list(request.url_root, self.session['claims']['email'])
+        projects_count = len(project_list)
+        projects_in_progress = projects_count
+
+        jobs_list = self.get_user_job_list(request.url_root, self.session['claims']['email'])
+        jobs_count = len(jobs_list)
+
+        user_data = {
+            'projects_count': projects_count,
+            'projects_in_progress': projects_in_progress,
+            'jobs_count': jobs_count
+        }
+
+        return render_template('profile.html', session=self.session, user_data=user_data)
 
     @login_required
     def dashboard(self):

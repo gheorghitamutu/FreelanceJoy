@@ -12,7 +12,7 @@
           <!--- current_user.username --->
           {{ session['claims']['name'] }}
         </p>
-        <a href="/page-profile">
+        <a href="{{ url_for('profile') }}">
           <i class="fa fa-circle text-success"></i> Online</a>
       </div>
     </div>
@@ -23,6 +23,11 @@
       <li>
         <a href="{{ url_for('dashboard') }}">
           <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="{{ url_for('profile') }}">
+          <i class="fa fa-th"></i> <span>Profile</span>
         </a>
       </li>
       <li>
