@@ -1,0 +1,50 @@
+{% extends "base_site.html" %}
+{% block title %} Add Job {% endblock title %}
+{% block stylesheets %}
+<!-- Specific CSS goes HERE -->
+{% endblock %}
+{% block content %}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        Add Category
+    </h1>
+    <ol class="breadcrumb">
+        <li><i class="fa fa-dashboard"></i>Add Category</li>
+    </ol>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="box box-info">
+        <div class="box-header with-border">
+            <h3 class="box-title">Add Category Form</h3>
+        </div>
+        <!-- /.box-header -->
+        <!-- form start -->
+        <form class="form-horizontal" method="POST">
+            <div class="box-body">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="name">Name</label>
+                    <div class="col-sm-10">
+                        <input autocomplete="off" class="form-control" id="name" name="name" placeholder="Name"
+                               type="text">
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <button class="btn btn-default" onclick="window.location='{{ url_for('categories') }}';return false;"
+                        type="cancel">Cancel
+                </button>
+                <button class="btn btn-info pull-right" type="submit" value="submit">Add Category</button>
+            </div>
+            <!-- /.box-footer -->
+        </form>
+    </div>
+</section>
+<!-- /.content -->
+{% endblock content %}
+{% block javascripts %}
+<!-- Specific JS goes HERE -->
+{% endblock %}
