@@ -456,10 +456,15 @@ class App(Flask):
 
     @staticmethod
     def get_user_project_list(url_root, email):
+        project_list = []
+
         api_url = '{}api/projects/{}'.format(url_root, email)
-        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-        r = requests.get(api_url, verify=False)
-        project_list = json.loads(r.text)
+        try:
+            # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
+            r = requests.get(api_url, verify=False)
+            project_list = json.loads(r.text)
+        except Exception as e:
+            print(e)
 
         return project_list
 
