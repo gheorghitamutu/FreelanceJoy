@@ -1,5 +1,4 @@
 import datetime
-import json
 import logging
 import os
 from functools import wraps
@@ -7,7 +6,6 @@ from functools import wraps
 import firebase_admin
 import google.oauth2.credentials
 import google.oauth2.id_token
-import requests
 from firebase_admin import auth
 from flask import Flask, render_template, request, redirect, url_for, Blueprint
 from flask_caching import Cache
@@ -17,14 +15,15 @@ from google.cloud import datastore
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from api.database.models import db
-from api.endpoints.attachments_endpoing import attachments_namespace
-from api.endpoints.biddings_endpoint import biddings_namespace
-from api.endpoints.categories_endpoint import categories_namespace
+from api.endpoints.attachments_endpoint import attachments_namespace
+from api.endpoints.biddings_endpoint import biddings_namespace, get_biddings_by_email
+from api.endpoints.categories_endpoint import categories_namespace, add_category, get_categories, delete_category
 from api.endpoints.delivered_assets_endpoint import projects_assets_namespace
-from api.endpoints.jobs_endpoint import jobs_namespace
-from api.endpoints.marketplace_endpoint import marketplace_namespace
+from api.endpoints.jobs_endpoint import jobs_namespace, get_jobs, add_job, delete_job
+from api.endpoints.marketplace_endpoint import marketplace_namespace, get_marketplace_project, get_marketplace_projects
 from api.endpoints.product_assets_endpoint import assets_namespace
-from api.endpoints.projects_endpoint import projects_namespace
+from api.endpoints.projects_endpoint import projects_namespace, get_projects_by_email, delete_project, add_project, \
+    get_project_by_id, get_job
 from api.restplus import api
 from config import *
 
@@ -220,12 +219,13 @@ class App(Flask):
 
     @login_required
     def profile(self):
-        project_list = self.get_user_project_list('http://127.0.0.1:8080/', self.session['claims']['email'])
+        project_list = get_projects_by_email(self.session['claims']['email'])
         projects_count = len(project_list)
         projects_in_progress = projects_count
 
-        jobs_list = self.get_user_job_list('http://127.0.0.1:8080/', self.session['claims']['email'])
-        jobs_count = len(jobs_list)
+        job_list = get_jobs(page=1, per_page=50, category_id=None,
+                            user_email=self.session['claims']['email'], freelancer_flag=False).items
+        jobs_count = len(job_list)
 
         user_data = {
             'projects_count': projects_count,
@@ -237,19 +237,17 @@ class App(Flask):
 
     @login_required
     def dashboard(self):
-        project_list = self.get_user_project_list('http://127.0.0.1:8080/', self.session['claims']['email'])
+        project_list = get_projects_by_email(self.session['claims']['email'])
         projects_count = len(project_list)
-        projects_past_deadline_count = \
-            len(list(filter(
-                lambda p: datetime.datetime.strptime(p['deadline'], '%Y-%m-%dT%H:%M:%S') < datetime.datetime.now(),
-                project_list)))
+        projects_past_deadline_count = len(list(filter(lambda p: p.deadline < datetime.datetime.now(), project_list)))
         projects_in_progress = projects_count
 
-        bidding_list = self.get_user_bidding_list('http://127.0.0.1:8080/', self.session['claims']['email'])
+        bidding_list = get_biddings_by_email(self.session['claims']['email'])
         biddings_count = len(bidding_list)
 
-        jobs_list = self.get_user_job_list('http://127.0.0.1:8080/', self.session['claims']['email'])
-        jobs_count = len(jobs_list)
+        job_list = get_jobs(page=1, per_page=50, category_id=None,
+                            user_email=self.session['claims']['email'], freelancer_flag=False).items
+        jobs_count = len(job_list)
 
         user_data = {
             'projects_count': projects_count,
@@ -263,236 +261,122 @@ class App(Flask):
 
     @login_required
     def categories(self):
-        category_list = self.get_job_category_list('http://127.0.0.1:8080/')
+        category_list = get_categories()
         return render_template('categories.html', session=self.session, category_list=category_list)
 
-    def delete_category(self, category_id):
-        self.delete_job_category('http://127.0.0.1:8080/', category_id)
+    @staticmethod
+    def delete_category(category_id):
+        delete_category(category_id)
 
         return redirect(url_for('categories'))
-
-    @staticmethod
-    def delete_job_category(url_root, category_id):
-        api_url = '{}api/categories/{}'.format(url_root, category_id)
-        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-        r = requests.delete(api_url, verify=False)
-
-        return r
 
     @login_required
     def add_category(self):
         if request.method == 'GET':
             return render_template('add_category.html', session=self.session)
         elif request.method == 'POST':
-            self.add_job_category('http://127.0.0.1:8080/')
+
+            category = {
+                'name': request.form['name']
+            }
+            add_category(category)
+
             return redirect(url_for('categories'))
         else:
             return redirect(url_for('categories'))
 
-    @staticmethod
-    def add_job_category(url_root):
-
-        payload = {
-            'name': request.form['name']
-        }
-
-        api_url = '{}api/categories/'.format(url_root)
-        r = requests.post(api_url, json=payload, verify=False)
-
-        return r
-
     @login_required
     def my_projects(self):
-        project_list = self.get_user_project_list('http://127.0.0.1:8080/', self.session['claims']['email'])
+        project_list = get_projects_by_email(self.session['claims']['email'])
         return render_template('my_projects.html', session=self.session, project_list=project_list)
 
     @login_required
     def add_project(self):
         if request.method == 'GET':
-            job_list = self.get_user_job_list('http://127.0.0.1:8080/', self.session['claims']['email'])
+            job_list = get_jobs(page=1, per_page=50, category_id=None,
+                                user_email=self.session['claims']['email'], freelancer_flag=False).items
             return render_template('add_project.html', session=self.session, job_list=job_list)
         elif request.method == 'POST':
-            self.add_user_project('http://127.0.0.1:8080/')
+            project = {
+                'deadline': datetime.datetime.strptime(request.form['deadline'], '%m/%d/%Y').isoformat(),
+                'freelancer_email': self.session['claims']['email'],
+                'job_id': request.form['job_id'],
+                'created_at': datetime.datetime.utcnow().isoformat()
+            }
+
+            add_project(project)
+
             return redirect(url_for('my_projects'))
         else:
             return redirect(url_for('my_projects'))
 
     def see_project(self, project_id):
-        project = self.get_project('http://127.0.0.1:8080/', project_id)
+        project = get_project_by_id(project_id)
 
         return render_template('project.html', session=self.session, project=project)
 
-    def delete_project(self, project_id):
-        self.delete_user_project('http://127.0.0.1:8080/', project_id)
+    @staticmethod
+    def delete_project(project_id):
+        delete_project(project_id)
 
         return redirect(url_for('my_projects'))
 
-    @staticmethod
-    def delete_user_project(url_root, job_id):
-        api_url = '{}api/projects/{}'.format(url_root, job_id)
-        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-        r = requests.delete(api_url, verify=False)
-
-        return r
-
-    @staticmethod
-    def get_project(url_root, project_id):
-        api_url = '{}api/projects/{}'.format(url_root, project_id)
-        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-        r = requests.get(api_url, verify=False)
-        project = json.loads(r.text)
-
-        return project
-
-    def add_user_project(self, url_root):
-
-        payload = {
-            'deadline': datetime.datetime.strptime(request.form['deadline'], '%m/%d/%Y').isoformat(),
-            'freelancer_email': self.session['claims']['email'],
-            'job_id': request.form['job_id'],
-            'created_at': datetime.datetime.utcnow().isoformat()
-        }
-
-        api_url = '{}api/projects/'.format(url_root)
-        r = requests.post(api_url, json=payload, verify=False)
-
-        return r
-
     @login_required
     def my_jobs(self):
-        job_list = self.get_user_job_list('http://127.0.0.1:8080/', self.session['claims']['email'])
+        job_list = get_jobs(page=1, per_page=50, category_id=None,
+                            user_email=self.session['claims']['email'], freelancer_flag=False).items
         return render_template('my_jobs.html', session=self.session, job_list=job_list)
 
     def see_job(self, job_id):
-        job = self.get_job('http://127.0.0.1:8080/', job_id)
+        job = get_job(job_id)
 
         return render_template('job.html', session=self.session, job=job)
 
-    def delete_job(self, job_id):
-        self.delete_user_job('http://127.0.0.1:8080/', job_id)
+    @staticmethod
+    def delete_job(job_id):
+        delete_job(job_id)
 
         return redirect(url_for('my_jobs'))
 
     @login_required
     def add_job(self):
         if request.method == 'GET':
-            category_list = self.get_job_category_list('http://127.0.0.1:8080/')
+            category_list = get_categories()
             return render_template('add_job.html', session=self.session, category_list=category_list)
         elif request.method == 'POST':
-            self.add_user_job('http://127.0.0.1:8080/')
+
+            job = {
+                'user_email': self.session['claims']['email'],
+                'title': request.form['title'],
+                'description': request.form['description'],
+                'payment': request.form['payment'],
+                'created_at': datetime.datetime.utcnow().isoformat(),
+                'category_id': request.form['category_id'],
+            }
+
+            add_job(job)
+
             return redirect(url_for('my_jobs'))
         else:
             return redirect(url_for('my_jobs'))
 
-    def add_user_job(self, url_root):
-
-        payload = {
-            'user_email': self.session['claims']['email'],
-            'title': request.form['title'],
-            'description': request.form['description'],
-            'payment': request.form['payment'],
-            'created_at': datetime.datetime.utcnow().isoformat(),
-            'category_id': request.form['category_id'],
-        }
-
-        api_url = '{}api/jobs/'.format(url_root)
-        r = requests.post(api_url, json=payload, verify=False)
-
-        return r
-
     def marketplace(self):
-        url_root = 'http://127.0.0.1:8080/'
-        categories_list = self.get_categories(url_root)
+        categories_list = get_categories()
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 10, type=int)
-        category_id = request.args.get('category_id', categories_list[0]['id'], type=int)
-        category_name = request.args.get('category_name', categories_list[0]['name'], type=str)
-        product_list = self.get_products_by_category(url_root, page, per_page, category_id)
+        category_id = request.args.get('category_id', categories_list[0].id, type=int)
+        category_name = request.args.get('category_name', categories_list[0].name, type=str)
+
+        product_list = get_marketplace_projects(page, per_page, category_id, self.session['claims']['email'], False)
 
         return render_template('marketplace.html', session=self.session, products=product_list,
                                categories=categories_list, current_category_id=category_id,
                                current_category_name=category_name)
 
     def product(self, product_id):
-        url_root = 'http://127.0.0.1:8080/'
-        product = self.get_product(url_root, product_id)
+        product = get_marketplace_project(product_id)
 
         return render_template('product_page.html', session=self.session, product=product)
-
-    @staticmethod
-    def delete_user_job(url_root, job_id):
-        api_url = '{}api/jobs/{}'.format(url_root, job_id)
-        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-        r = requests.delete(api_url, verify=False)
-
-        return r
-
-    @staticmethod
-    def get_job(url_root, job_id):
-        api_url = '{}api/jobs/{}'.format(url_root, job_id)
-        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-        r = requests.get(api_url, verify=False)
-        job = json.loads(r.text)
-
-        return job
-
-    @staticmethod
-    def get_user_job_list(url_root, email):
-        api_url = '{}api/jobs/?page=1&per_page=50&user_email={}&freelancer_flag=false'.format(url_root, email)
-        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-        r = requests.get(api_url, verify=False)
-        job_list = json.loads(r.text)
-
-        return job_list['items']
-
-    @staticmethod
-    def get_job_category_list(url_root):
-        api_url = '{}api/categories'.format(url_root)
-        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-        r = requests.get(api_url, verify=False)
-        categories_list = json.loads(r.text)
-
-        return categories_list
-
-    @staticmethod
-    def get_user_project_list(url_root, email):
-        project_list = []
-
-        api_url = '{}api/projects/{}'.format(url_root, email)
-        try:
-            # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-            r = requests.get(api_url, verify=False)
-            project_list = json.loads(r.text)
-        except Exception as e:
-            print(e)
-
-        return project_list
-
-    @staticmethod
-    def get_user_bidding_list(url_root, email):
-        api_url = '{}api/biddings/{}'.format(url_root, email)
-        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-        r = requests.get(api_url, verify=False)
-        bidding_list = json.loads(r.text)
-
-        return bidding_list
-
-    @staticmethod
-    def get_categories(url_root):
-        api_url = '{}api/categories'.format(url_root)
-        r = requests.get(api_url, verify=False)
-
-        return json.loads(r.text)
-
-    @staticmethod
-    def get_products_by_category(url_root, page, per_page, category_id):
-        api_url = '{}api/marketplace/?page={}&per_page={}&category_id={}'.format(url_root, page, per_page, category_id)
-        return json.loads(requests.get(api_url, verify=False).text)
-
-    @staticmethod
-    def get_product(url_root, product_id):
-        api_url = '{}api/marketplace/{}'.format(url_root, product_id)
-        return json.loads(requests.get(api_url, verify=False).text)
 
     @staticmethod
     def unauthorized_handler():
