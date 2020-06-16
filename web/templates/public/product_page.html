@@ -43,10 +43,15 @@
 
             </div>
             <div style="display:flex; flex-direction: row; justify-content: center;  align-items: center">
-                <button onclick="showAssets({{ archives }})" class="btn btn-danger mt-3">
-                    Buy
-                </button>
-                <div id="assets" style="font-size: 25px; display: flex; justify-content: center; flex-direction: column;"></div>
+                <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#archives">Buy</button>
+                <div id="archives" class="collapse">
+                    {% for archive in archives %}
+                        <ul>
+                            <li><a href="{{archive['link']}}">{{archive['file_name']}}</a></li>
+                        </ul>
+                    {% endfor %}
+                </div>
+
             </div>
 
         </div>
@@ -55,17 +60,6 @@
 
 {% endblock content %}
 {% block javascripts %}
-    <script>
-        function showAssets(archives) {
-            let html = '';
-            let element = document.getElementById("assets");
-            let archive;
-            for (archive of archives) {
-                html += `<a href="${archive['link']}">${archive['file_name']}</a>`
-            }
-            element.innerHTML = html;
-        }
-    </script>
 
 
 {% endblock %}

@@ -23,9 +23,17 @@
         </div>
         <div class="inner">
             <p>Deadline: {{ project['deadline'] }}</p>
-            <p>Email: {{ project['freelancer_email'] }}</p>
+            <p>Freelancer email: {{ project['freelancer_email'] }}</p>
             <p>Job ID: {{ project['job_id'] }}</p>
             <p>Created: {{ project['created_at'] }}</p>
+        </div>
+        <h3>Delivered assets: </h3>
+        <div class="inner">
+           <ol>
+                {% for attachment in project['delivered_assets'] %}
+                <li><a href="{{ attachment['link'] }}">{{ attachment['file_name'] }}</a></li>
+                {% endfor %}
+            </ol>
         </div>
 
         <!-- /.box-body -->
