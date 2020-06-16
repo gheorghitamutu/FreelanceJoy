@@ -8,16 +8,6 @@ import firebase_admin
 import google.oauth2.credentials
 import google.oauth2.id_token
 import requests
-
-try:
-    import requests_toolbelt.adapters.appengine
-
-    # Use the App Engine Requests adapter. This makes sure that Requests uses
-    # URLFetch.
-    requests_toolbelt.adapters.appengine.monkeypatch()
-except Exception:
-    pass
-
 from firebase_admin import auth
 from flask import Flask, render_template, request, redirect, url_for, Blueprint
 from flask_caching import Cache
@@ -42,6 +32,7 @@ os.environ.setdefault("GCLOUD_PROJECT", "freelancejoy")
 
 try:
     import googleclouddebugger
+
     googleclouddebugger.enable()
 except ImportError:
     pass
