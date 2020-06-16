@@ -220,11 +220,11 @@ class App(Flask):
 
     @login_required
     def profile(self):
-        project_list = self.get_user_project_list(request.url_root, self.session['claims']['email'])
+        project_list = self.get_user_project_list('http://127.0.0.1:8080/', self.session['claims']['email'])
         projects_count = len(project_list)
         projects_in_progress = projects_count
 
-        jobs_list = self.get_user_job_list(request.url_root, self.session['claims']['email'])
+        jobs_list = self.get_user_job_list('http://127.0.0.1:8080/', self.session['claims']['email'])
         jobs_count = len(jobs_list)
 
         user_data = {
@@ -237,7 +237,7 @@ class App(Flask):
 
     @login_required
     def dashboard(self):
-        project_list = self.get_user_project_list(request.url_root, self.session['claims']['email'])
+        project_list = self.get_user_project_list('http://127.0.0.1:8080/', self.session['claims']['email'])
         projects_count = len(project_list)
         projects_past_deadline_count = \
             len(list(filter(
@@ -245,10 +245,10 @@ class App(Flask):
                 project_list)))
         projects_in_progress = projects_count
 
-        bidding_list = self.get_user_bidding_list(request.url_root, self.session['claims']['email'])
+        bidding_list = self.get_user_bidding_list('http://127.0.0.1:8080/', self.session['claims']['email'])
         biddings_count = len(bidding_list)
 
-        jobs_list = self.get_user_job_list(request.url_root, self.session['claims']['email'])
+        jobs_list = self.get_user_job_list('http://127.0.0.1:8080/', self.session['claims']['email'])
         jobs_count = len(jobs_list)
 
         user_data = {
@@ -263,11 +263,11 @@ class App(Flask):
 
     @login_required
     def categories(self):
-        category_list = self.get_job_category_list(request.url_root)
+        category_list = self.get_job_category_list('http://127.0.0.1:8080/')
         return render_template('categories.html', session=self.session, category_list=category_list)
 
     def delete_category(self, category_id):
-        self.delete_job_category(request.url_root, category_id)
+        self.delete_job_category('http://127.0.0.1:8080/', category_id)
 
         return redirect(url_for('categories'))
 
@@ -284,7 +284,7 @@ class App(Flask):
         if request.method == 'GET':
             return render_template('add_category.html', session=self.session)
         elif request.method == 'POST':
-            self.add_job_category(request.url_root)
+            self.add_job_category('http://127.0.0.1:8080/')
             return redirect(url_for('categories'))
         else:
             return redirect(url_for('categories'))
@@ -303,27 +303,27 @@ class App(Flask):
 
     @login_required
     def my_projects(self):
-        project_list = self.get_user_project_list(request.url_root, self.session['claims']['email'])
+        project_list = self.get_user_project_list('http://127.0.0.1:8080/', self.session['claims']['email'])
         return render_template('my_projects.html', session=self.session, project_list=project_list)
 
     @login_required
     def add_project(self):
         if request.method == 'GET':
-            job_list = self.get_user_job_list(request.url_root, self.session['claims']['email'])
+            job_list = self.get_user_job_list('http://127.0.0.1:8080/', self.session['claims']['email'])
             return render_template('add_project.html', session=self.session, job_list=job_list)
         elif request.method == 'POST':
-            self.add_user_project(request.url_root)
+            self.add_user_project('http://127.0.0.1:8080/')
             return redirect(url_for('my_projects'))
         else:
             return redirect(url_for('my_projects'))
 
     def see_project(self, project_id):
-        project = self.get_project(request.url_root, project_id)
+        project = self.get_project('http://127.0.0.1:8080/', project_id)
 
         return render_template('project.html', session=self.session, project=project)
 
     def delete_project(self, project_id):
-        self.delete_user_project(request.url_root, project_id)
+        self.delete_user_project('http://127.0.0.1:8080/', project_id)
 
         return redirect(url_for('my_projects'))
 
@@ -360,26 +360,26 @@ class App(Flask):
 
     @login_required
     def my_jobs(self):
-        job_list = self.get_user_job_list(request.url_root, self.session['claims']['email'])
+        job_list = self.get_user_job_list('http://127.0.0.1:8080/', self.session['claims']['email'])
         return render_template('my_jobs.html', session=self.session, job_list=job_list)
 
     def see_job(self, job_id):
-        job = self.get_job(request.url_root, job_id)
+        job = self.get_job('http://127.0.0.1:8080/', job_id)
 
         return render_template('job.html', session=self.session, job=job)
 
     def delete_job(self, job_id):
-        self.delete_user_job(request.url_root, job_id)
+        self.delete_user_job('http://127.0.0.1:8080/', job_id)
 
         return redirect(url_for('my_jobs'))
 
     @login_required
     def add_job(self):
         if request.method == 'GET':
-            category_list = self.get_job_category_list(request.url_root)
+            category_list = self.get_job_category_list('http://127.0.0.1:8080/')
             return render_template('add_job.html', session=self.session, category_list=category_list)
         elif request.method == 'POST':
-            self.add_user_job(request.url_root)
+            self.add_user_job('http://127.0.0.1:8080/')
             return redirect(url_for('my_jobs'))
         else:
             return redirect(url_for('my_jobs'))
@@ -401,7 +401,7 @@ class App(Flask):
         return r
 
     def marketplace(self):
-        url_root = request.url_root
+        url_root = 'http://127.0.0.1:8080/'
         categories_list = self.get_categories(url_root)
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 10, type=int)
@@ -414,7 +414,7 @@ class App(Flask):
                                current_category_name=category_name)
 
     def product(self, product_id):
-        url_root = request.url_root
+        url_root = 'http://127.0.0.1:8080/'
         product = self.get_product(url_root, product_id)
 
         return render_template('product_page.html', session=self.session, product=product)
