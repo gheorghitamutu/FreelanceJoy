@@ -30,6 +30,13 @@ from config import *
 
 os.environ.setdefault("GCLOUD_PROJECT", "freelancejoy")
 
+try:
+    import googleclouddebugger
+
+    googleclouddebugger.enable()
+except ImportError:
+    pass
+
 
 class App(Flask):
     def __init__(self, import_name):
