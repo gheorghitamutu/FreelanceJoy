@@ -114,8 +114,6 @@ class App(Flask):
         self.register_error_handler(500, self.server_error)
         self.register_error_handler(404, self.not_found)
 
-        self.api_cloud_function = 'https://us-central1-freelancejoy.cloudfunctions.net/api'
-
     def store_time(self, email, dt):
         entity = datastore.Entity(key=self.data_store_client.key('User', email, 'visit'))
         entity.update({
@@ -273,15 +271,11 @@ class App(Flask):
 
         return redirect(url_for('categories'))
 
-    def delete_job_category(self, url_root, category_id):
+    @staticmethod
+    def delete_job_category(url_root, category_id):
         api_url = '{}api/categories/{}'.format(url_root, category_id)
-
-        if '127.0.0.1' in url_root:
-            # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-            r = requests.delete(api_url, verify=False)
-        else:
-            full_api_url = '{}?api_url={}&action=delete'.format(self.api_cloud_function, api_url)
-            r = requests.get(full_api_url)
+        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
+        r = requests.delete(api_url, verify=False)
 
         return r
 
@@ -341,19 +335,12 @@ class App(Flask):
 
         return r
 
-    def get_project(self, url_root, project_id):
+    @staticmethod
+    def get_project(url_root, project_id):
         api_url = '{}api/projects/{}'.format(url_root, project_id)
-        project = None
-
-        if '127.0.0.1' in url_root:
-            # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-            r = requests.get(api_url, verify=False)
-        else:
-            full_api_url = '{}?api_url={}&action=get'.format(self.api_cloud_function, api_url)
-            r = requests.get(full_api_url)
-
-        if r is not None:
-            project = json.loads(r.text)
+        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
+        r = requests.get(api_url, verify=False)
+        project = json.loads(r.text)
 
         return project
 
@@ -440,136 +427,72 @@ class App(Flask):
 
         return r
 
-    def get_job(self, url_root, job_id):
+    @staticmethod
+    def get_job(url_root, job_id):
         api_url = '{}api/jobs/{}'.format(url_root, job_id)
-        job = None
-
-        if '127.0.0.1' in url_root:
-            # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-            r = requests.get(api_url, verify=False)
-        else:
-            full_api_url = '{}?api_url={}&action=get'.format(self.api_cloud_function, api_url)
-            r = requests.get(full_api_url)
-
-        if r is not None:
-            job = json.loads(r.text)
+        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
+        r = requests.get(api_url, verify=False)
+        job = json.loads(r.text)
 
         return job
 
-    def get_user_job_list(self, url_root, email):
+    @staticmethod
+    def get_user_job_list(url_root, email):
         api_url = '{}api/jobs/?page=1&per_page=50&user_email={}&freelancer_flag=false'.format(url_root, email)
-        job_list = None
+        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
+        r = requests.get(api_url, verify=False)
+        job_list = json.loads(r.text)
 
-        if '127.0.0.1' in url_root:
-            # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-            r = requests.get(api_url, verify=False)
-        else:
-            full_api_url = '{}?api_url={}&action=get'.format(self.api_cloud_function, api_url)
-            r = requests.get(full_api_url)
+        return job_list['items']
 
-        if r is not None:
-            job_list = json.loads(r.text)
-            return job_list['items']
-
-        return job_list
-
-    def get_job_category_list(self, url_root):
+    @staticmethod
+    def get_job_category_list(url_root):
         api_url = '{}api/categories'.format(url_root)
-        categories_list = None
-
-        if '127.0.0.1' in url_root:
-            # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-            r = requests.get(api_url, verify=False)
-        else:
-            full_api_url = '{}?api_url={}&action=get'.format(self.api_cloud_function, api_url)
-            r = requests.get(full_api_url)
-
-        if r is not None:
-            categories_list = json.loads(r.text)
+        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
+        r = requests.get(api_url, verify=False)
+        categories_list = json.loads(r.text)
 
         return categories_list
 
-    def get_user_project_list(self, url_root, email):
+    @staticmethod
+    def get_user_project_list(url_root, email):
         project_list = []
-        api_url = '{}api/projects/{}'.format(url_root, email)
 
-        if '127.0.0.1' in url_root:
+        api_url = '{}api/projects/{}'.format(url_root, email)
+        try:
             # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
             r = requests.get(api_url, verify=False)
-        else:
-            full_api_url = '{}?api_url={}&action=get'.format(self.api_cloud_function, api_url)
-            r = requests.get(full_api_url)
-
-        if r is not None:
             project_list = json.loads(r.text)
+        except Exception as e:
+            print(e)
 
         return project_list
 
-    def get_user_bidding_list(self, url_root, email):
+    @staticmethod
+    def get_user_bidding_list(url_root, email):
         api_url = '{}api/biddings/{}'.format(url_root, email)
-        bidding_list = None
-
-        if '127.0.0.1' in url_root:
-            # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-            r = requests.get(api_url, verify=False)
-            bidding_list = json.loads(r.text)
-        else:
-            full_api_url = '{}?api_url={}&action=get'.format(self.api_cloud_function, api_url)
-            r = requests.get(full_api_url)
-
-        if r is not None:
-            bidding_list = json.loads(r.text)
+        # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
+        r = requests.get(api_url, verify=False)
+        bidding_list = json.loads(r.text)
 
         return bidding_list
 
-    def get_categories(self, url_root):
+    @staticmethod
+    def get_categories(url_root):
         api_url = '{}api/categories'.format(url_root)
-        categories = None
+        r = requests.get(api_url, verify=False)
 
-        if '127.0.0.1' in url_root:
-            # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-            r = requests.get(api_url, verify=False)
-            categories = json.loads(r.text)
-        else:
-            full_api_url = '{}?api_url={}&action=get'.format(self.api_cloud_function, api_url)
-            r = requests.get(full_api_url)
+        return json.loads(r.text)
 
-        if r is not None:
-            categories = json.loads(r.text)
-
-        return categories
-
-    def get_products_by_category(self, url_root, page, per_page, category_id):
+    @staticmethod
+    def get_products_by_category(url_root, page, per_page, category_id):
         api_url = '{}api/marketplace/?page={}&per_page={}&category_id={}'.format(url_root, page, per_page, category_id)
-        products = None
+        return json.loads(requests.get(api_url, verify=False).text)
 
-        if '127.0.0.1' in url_root:
-            # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-            r = requests.get(api_url, verify=False)
-        else:
-            full_api_url = '{}?api_url={}&action=get'.format(self.api_cloud_function, api_url)
-            r = requests.get(full_api_url)
-
-        if r is not None:
-            products = json.loads(r.text)
-
-        return products
-
-    def get_product(self, url_root, product_id):
+    @staticmethod
+    def get_product(url_root, product_id):
         api_url = '{}api/marketplace/{}'.format(url_root, product_id)
-        product = None
-
-        if '127.0.0.1' in url_root:
-            # https://stackoverflow.com/questions/10667960/python-requests-throwing-sslerror
-            r = requests.get(api_url, verify=False)
-        else:
-            full_api_url = '{}?api_url={}&action=get'.format(self.api_cloud_function, api_url)
-            r = requests.get(full_api_url)
-
-        if r is not None:
-            product = json.loads(r.text)
-
-        return product
+        return json.loads(requests.get(api_url, verify=False).text)
 
     @staticmethod
     def unauthorized_handler():
@@ -604,4 +527,4 @@ class App(Flask):
 app = App(__name__)
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=8080, debug=False, ssl_context='adhoc')
+    app.run(host='127.0.0.1', port=8080, debug=True)
