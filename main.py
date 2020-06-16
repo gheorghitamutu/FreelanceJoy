@@ -47,8 +47,8 @@ class App(Flask):
         # database
 
         self.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
-        self.config["SQLALCHEMY_ECHO"] = SQLALCHEMY_ECHO
-        self.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = SQLALCHEMY_TRACK_MODIFICATIONS
+        # self.config["SQLALCHEMY_ECHO"] = SQLALCHEMY_ECHO
+        # self.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = SQLALCHEMY_TRACK_MODIFICATIONS
         self.config["SQLALCHEMY_POOL_TIMEOUT"] = SQLALCHEMY_POOL_TIMEOUT
         self.config["SQLALCHEMY_MAX_OVERFLOW"] = SQLALCHEMY_MAX_OVERFLOW
         self.config['SWAGGER_UI_DOC_EXPANSION'] = SWAGGER_UI_DOC_EXPANSION
@@ -515,4 +515,4 @@ class App(Flask):
 app = App(__name__)
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=8080, debug=True, ssl_context='adhoc')
+    app.run(host='127.0.0.1', port=8080, debug=False, ssl_context='adhoc')
