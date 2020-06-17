@@ -113,6 +113,8 @@ class App(Flask):
         self.register_error_handler(500, self.server_error)
         self.register_error_handler(404, self.not_found)
 
+
+
     def store_time(self, email, dt):
         entity = datastore.Entity(key=self.data_store_client.key('User', email, 'visit'))
         entity.update({
